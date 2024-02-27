@@ -51,3 +51,5 @@ urlpatterns += [
     path('api-auth/', include('rest_framework.urls')),
 ]
 
+handler404 = views.error_404_view
+

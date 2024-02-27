@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group, User
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth import logout
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.views.generic import TemplateView, CreateView
 from django.core.paginator import Paginator
 from django.contrib.auth.forms import UserCreationForm
@@ -27,7 +27,11 @@ from .forms import CreatePost, CreateGamePost, CustomUserCreationForm
 
 
 
-
+def error_404_view(request, exception):
+   
+    # we add the path to the 404.html file
+    # here. The name of our HTML file is 404.html
+    return render(request, '404.html')
 
 @api_view(['GET'])
 def api_root(request, format=None):

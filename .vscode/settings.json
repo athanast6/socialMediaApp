@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/e91c2627-d2ad-412b-88ce-d2fb9beb323c/resourceGroups/appsvc_linux_centralus_basic/providers/Microsoft.Web/sites/hooptoday-webapp-512",
+    "appService.deploySubpath": "."
+}
