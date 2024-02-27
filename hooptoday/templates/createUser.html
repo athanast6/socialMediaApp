@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+
+
+{% block content %}
+
+<div class="bg-gradient-to-b bg-gray-800 opacity-100"> 
+
+
+
+
+    <body  class = "bg-slate-800">
+
+        <div class="border-opacity-75 border-gray-200 rounded-2xl p-8 bg-gray-800 align-middle" >
+            <br>
+        <h2 class="text-xl text-gray-100 font-bold font-serif mb-2 p-4">Sign Up</h2>
+        
+    
+        <!--
+        <form method="post" class="border-opacity-75 border-gray-200 rounded-2xl p-8 bg-gray-50 align-middle">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <br>
+            <button type="submit" class="bg-green-500 hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Register</button>
+        </form>
+        -->
+
+        <form method="POST" class="align-middle">
+            {% csrf_token %}
+            <div class="mb-4 p-4">
+
+                <div class="block text-gray-100 text-sm font-bold mb-2">{{ form.username.label_tag }}</div>
+                <div> {{ form.username }} </div>
+                
+                
+            </div>
+            <div class="mb-6 p-4">
+                <div class="block text-gray-100 text-sm font-bold mb-2">{{ form.password1.label_tag }}</div>
+                <div> {{ form.password1 }}</div>
+            </div>
+            <div class="mb-6 p-4">
+                <div class="block text-gray-100 text-sm font-bold mb-2">{{ form.password2.label_tag }}</div>
+                <div>{{ form.password2 }} </div>
+            </div>
+           
+            <button type="submit" class="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Sign Up</button>
+            
+            
+        </div>
+        </form>
+        
+    
+    </body>
+
+
+
+
+
+
+</div>  
+
+{% endblock %}
