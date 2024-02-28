@@ -145,3 +145,4 @@ LOGIN_URL = '/login/'  # Specify the login URL
 LOGIN_REDIRECT_URL = '/feed/'  # Redirect URL after successful login
 
 
+

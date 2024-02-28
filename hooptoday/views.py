@@ -207,6 +207,58 @@ def create_game_post_view(request):
     return render(request, 'createGamePost.html', {'form': form})
 
 
+def user_posts(request, user_id):
+
+    posts = Post.objects.filter(owner_id=user_id)
+    if posts.exists():
+
+        game_posts = GamePost.objects.filter(owner_id=user_id)
+        userwins=0
+        userlosses=0
+        usergames = 0
+        totalpoints=0
+        otherpoints=0
+
+        if game_posts.exists():
+            for game in game_posts:
+                if game.result == "W":
+                    userwins+=1
+                else:
+                    userlosses+=1
+                usergames +=1
+                totalpoints+=game.myScore
+                otherpoints+=game.awayScore
+
+        avg_points=totalpoints/usergames
+        away_avg_points=otherpoints/usergames
+            
+        all_posts = list(posts) + list(game_posts)
+
+        # Sort the combined list of posts by creation date
+        all_posts.sort(key=lambda x: x.createdDate, reverse=True)
+
+        posts_per_page = 10
+        paginator = Paginator(all_posts, posts_per_page)
+        page_number = request.GET.get('page', 1)
+
+        # Get the page object for the specified page number
+        page = paginator.get_page(page_number)
+
+    
+        context = {
+            'page':page,
+            'userwins':userwins,
+            'userlosses':userlosses,
+            'usergames':usergames,
+            'avg_points':avg_points,
+            'away_avg_points':away_avg_points,
+        }
+
+        return render(request,'profile.html', context=context)
+    else:
+        return redirect('feed')
+
+
 
 
 def favicon_not_found(request):

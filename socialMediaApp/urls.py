@@ -44,6 +44,8 @@ urlpatterns=[
     path('createPost/',views.create_post_view,name='create-post'),
     path('createGamePost/',views.create_game_post_view,name='create-game-post'),
 
+    path('user/<int:user_id>/', views.user_posts, name='user_posts'),
+
     path('signup/', views.signUp_view, name='signup'),
     path('login/', LoginView.as_view(
            template_name='loginUser.html',
@@ -51,7 +53,7 @@ urlpatterns=[
     path('logout/', views.logout_view, name='logout'),
 
     path('favicon.ico', views.favicon_not_found),
-]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
 
 
 urlpatterns += [
