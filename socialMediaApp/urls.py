@@ -17,6 +17,9 @@ Including another URLconf
 from django.urls import include, path
 from rest_framework import routers
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 from django.contrib.auth.views import LoginView
 from django.views.generic.base import RedirectView
 
@@ -35,7 +38,9 @@ urlpatterns=[
     path('posts/', views.PostList.as_view(), name = 'posts'),
     path('posts/<int:pk>/', views.PostDetail.as_view(), name = 'post-detail'),
 
-    path('feed/',views.PublicFeed.as_view(),name='feed'),
+    path('home/', views.home, name='home'),
+
+    path('feed/',views.publicFeed ,name='feed'),
     path('createPost/',views.create_post_view,name='create-post'),
     path('createGamePost/',views.create_game_post_view,name='create-game-post'),
 
@@ -44,7 +49,9 @@ urlpatterns=[
            template_name='loginUser.html',
            redirect_authenticated_user=True), name='login'),
     path('logout/', views.logout_view, name='logout'),
-]
+
+    path('favicon.ico', views.favicon_not_found),
+]  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
 urlpatterns += [

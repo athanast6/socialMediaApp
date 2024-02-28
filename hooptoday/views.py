@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group, User
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth import logout
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden, HttpResponseNotFound, HttpResponse
 from django.views.generic import TemplateView, CreateView
 from django.core.paginator import Paginator
 from django.contrib.auth.forms import UserCreationForm
@@ -70,33 +70,48 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+def publicFeed(request):
 
-class PublicFeed(TemplateView):
 
-    template_name = 'feed.html'
+    if(request.method == "GET"):
 
-    def get_context_data(self, **kwargs):
+        print(request)
 
-        context = super().get_context_data(**kwargs)
+        queryset = Post.objects.all()
 
-        posts = Post.objects.all()
-        game_posts = GamePost.objects.all()
+        if queryset.exists():
+            posts = Post.objects.all()
+            game_posts = GamePost.objects.all()
+            
 
-        all_posts = list(posts) + list(game_posts)
+            all_posts = list(posts) + list(game_posts)
 
-        # Sort the combined list of posts by creation date
-        all_posts.sort(key=lambda x: x.createdDate, reverse=True)
+            # Sort the combined list of posts by creation date
+            all_posts.sort(key=lambda x: x.createdDate, reverse=True)
 
-        posts_per_page = 10
-        paginator = Paginator(all_posts, posts_per_page)
-        page_number = self.request.GET.get('page', 1)
+            posts_per_page = 10
+            paginator = Paginator(all_posts, posts_per_page)
+            page_number = request.GET.get('page', 1)
 
-        # Get the page object for the specified page number
-        page = paginator.get_page(page_number)
+            # Get the page object for the specified page number
+            page = paginator.get_page(page_number)
 
-        #context['posts'] = all_posts
-        context['page'] = page
-        return context
+            #context['posts'] = all_posts
+            context = {
+                'page':page
+            }
+
+            return render(request, 'feed.html', context)
+        
+        else:
+
+            return redirect('home')
+        
+
+    
+
+
+    
     
 def home(request):
     return render(request, 'base.html')
@@ -190,6 +205,12 @@ def create_game_post_view(request):
         else: return render(request, 'createGamePost.html')
         
     return render(request, 'createGamePost.html', {'form': form})
+
+
+
+
+def favicon_not_found(request):
+    return HttpResponseNotFound()
    
    
 
