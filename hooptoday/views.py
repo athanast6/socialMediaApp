@@ -101,7 +101,7 @@ def publicFeed(request):
                 'page':page
             }
 
-            return render(request, 'feed.html', context)
+            return render(request, 'hooptoday/feed.html', context)
         
         else:
 
@@ -127,7 +127,7 @@ def signUp_view(request):
             return redirect('login')  # Redirect to login page after successful registration
     else:
         form = CustomUserCreationForm()
-    return render(request, 'createUser.html', {'form': form})
+    return render(request, 'hooptoday/createUser.html', {'form': form})
 
 
 
@@ -167,9 +167,9 @@ def create_post_view(request):
     else:
         
         if(request.user.is_authenticated):form = CreatePost()
-        else: return render(request, 'createPost.html')
+        else: return render(request, 'hooptoday/createPost.html')
         
-    return render(request, 'createPost.html', {'form': form})
+    return render(request, 'hooptoday/createPost.html', {'form': form})
 
 
 def create_game_post_view(request):
@@ -202,9 +202,9 @@ def create_game_post_view(request):
     else:
         
         if(request.user.is_authenticated):form = CreateGamePost()
-        else: return render(request, 'createGamePost.html')
+        else: return render(request, 'hooptoday/createGamePost.html')
         
-    return render(request, 'createGamePost.html', {'form': form})
+    return render(request, 'hooptoday/createGamePost.html', {'form': form})
 
 
 def user_posts(request, user_id):
@@ -254,7 +254,7 @@ def user_posts(request, user_id):
             'away_avg_points':away_avg_points,
         }
 
-        return render(request,'profile.html', context=context)
+        return render(request,'hooptoday/profile.html', context=context)
     else:
         return redirect('feed')
 
