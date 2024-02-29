@@ -15,15 +15,12 @@
 
 
         <div class = "rounded-2xl p-8 mb-4 bg-gray-50">
-        {% if user.is_authenticated %}
+
         <!-- Display content for authenticated users -->
-        <p class="text-lg font-bold p-2 text-black snap-center">{{ user.username }}</p>
+        <p class="text-lg font-bold p-2 text-black snap-center"> {{ username }}'s profile</p>
         <p class="text-lg font-bold p-2 text-black snap-center"> Wins: {{ userwins }}   Losses: {{ userlosses }}    Games Played: {{ usergames }}</p>
         <p class="text-lg font-bold p-2 text-black snap-center"> Avg Scored: {{ avg_points }}   Avg Allowed: {{ away_avg_points }}</p>
-        {% else %}
-            <p>Please log in to access the content.</p>
-            <!-- Display content for anonymous users -->
-        {% endif %}
+        
 
         </div>
 
@@ -42,15 +39,35 @@
                 <div>
                     <p class="align-middle font-serif"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
                 </div>
+                <br>
+                {% if user.is_authenticated and user == post.owner %}
+                    <form action="{% url 'delete-game-post' post.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Delete</button>
+                    </form>
+                {% endif %}
             {% else %}
-                
+            
             <p class="align-middle font-serif">{{ post.text }}</p>
+
+            <div>
+                <br>
+                {% if user.is_authenticated and user == post.owner %}
+                    <form action="{% url 'delete-post' post.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" 
+                            class="hover:text-gray-300 bg-red-600 text-black font-bold rounded focus:outline-none focus:shadow-outline">
+                            Delete
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
             {% endif %}
             
-            <br>
             <p> Likes: {{ post.likes }} <button>+1</button> </p>
             
-    
+            
+                
         </div>
         {% endfor %}
 

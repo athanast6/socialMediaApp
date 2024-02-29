@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, User
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth import logout
 from django.http import Http404, HttpResponseForbidden, HttpResponseNotFound, HttpResponse
@@ -31,7 +31,7 @@ def error_404_view(request, exception):
    
     # we add the path to the 404.html file
     # here. The name of our HTML file is 404.html
-    return render(request, '404.html')
+    return render(request, 'hooptoday/404.html')
 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -114,7 +114,7 @@ def publicFeed(request):
     
     
 def home(request):
-    return render(request, 'base.html')
+    return render(request, 'hooptoday/base.html')
 
 def signUp_view(request):
     if request.method == 'POST':
@@ -206,18 +206,40 @@ def create_game_post_view(request):
         
     return render(request, 'hooptoday/createGamePost.html', {'form': form})
 
+def delete_post_view(request,post_id):
 
+    post = get_object_or_404(Post, pk=post_id)
+    
+    post.delete()
+
+    return redirect('feed')
+
+def delete_game_post_view(request,post_id):
+
+    game_post = get_object_or_404(GamePost, pk=post_id)
+    
+    game_post.delete()
+
+    return redirect('feed')
+
+
+#PROFILE
 def user_posts(request, user_id):
 
-    posts = Post.objects.filter(owner_id=user_id)
-    if posts.exists():
+    user = User.objects.get(id=user_id)
 
-        game_posts = GamePost.objects.filter(owner_id=user_id)
+    posts = Post.objects.filter(owner_id=user_id)
+    game_posts = GamePost.objects.filter(owner_id=user_id)
+    if posts.exists() | game_posts.exists():
+
+        
         userwins=0
         userlosses=0
         usergames = 0
         totalpoints=0
         otherpoints=0
+        avg_points=0
+        away_avg_points=0
 
         if game_posts.exists():
             for game in game_posts:
@@ -229,8 +251,9 @@ def user_posts(request, user_id):
                 totalpoints+=game.myScore
                 otherpoints+=game.awayScore
 
-        avg_points=totalpoints/usergames
-        away_avg_points=otherpoints/usergames
+        if usergames != 0:
+            avg_points=totalpoints/usergames
+            away_avg_points=otherpoints/usergames
             
         all_posts = list(posts) + list(game_posts)
 
@@ -247,6 +270,7 @@ def user_posts(request, user_id):
     
         context = {
             'page':page,
+            'username':user.username,
             'userwins':userwins,
             'userlosses':userlosses,
             'usergames':usergames,
@@ -256,8 +280,7 @@ def user_posts(request, user_id):
 
         return render(request,'hooptoday/profile.html', context=context)
     else:
-        return redirect('feed')
-
+        return render(request,'hooptoday/profile.html',{'username':user.username})
 
 
 

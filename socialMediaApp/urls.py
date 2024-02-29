@@ -43,12 +43,14 @@ urlpatterns=[
     path('feed/',views.publicFeed ,name='feed'),
     path('createPost/',views.create_post_view,name='create-post'),
     path('createGamePost/',views.create_game_post_view,name='create-game-post'),
+    path('deletePost/<int:post_id>/',views.delete_post_view,name='delete-post'),
+    path('deleteGamePost/<int:post_id>/',views.delete_game_post_view,name='delete-game-post'),
 
     path('user/<int:user_id>/', views.user_posts, name='user_posts'),
 
     path('signup/', views.signUp_view, name='signup'),
     path('login/', LoginView.as_view(
-           template_name='loginUser.html',
+           template_name='hooptoday/loginUser.html',
            redirect_authenticated_user=True), name='login'),
     path('logout/', views.logout_view, name='logout'),
 

@@ -6,10 +6,10 @@
 <head>
     
     <link rel="stylesheet" 
-        href= "{% static 'src\output.css' %}" />
+        href= "{% static 'hooptoday/output.css' %}" />
    
 
-    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'hooptoday/favicon.ico' %}">
 
     <meta charset="UTF-8">
     <title>Hoop Today</title>
@@ -55,7 +55,7 @@
                     <a href= 
                     "{% url 'user_posts' user_id=user.id %}" class="hover:text-gray-300">
                        
-                        Profile 
+                        @{{ user.username }}
                     </a>
                     {% else %}
                     <a href= 
