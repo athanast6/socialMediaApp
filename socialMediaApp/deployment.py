@@ -35,3 +35,15 @@ DATABASES = {
         'PASSWORD': conn_str_params['password'],
     }
 }
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
+
+# settings.py
+LOGIN_URL = '/login/'  # Specify the login URL
+LOGIN_REDIRECT_URL = '/feed/'  # Redirect URL after successful login
