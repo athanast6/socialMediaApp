@@ -7,11 +7,9 @@
 
 
 
-    <body  class = "bg-slate-800">
-
         <div class="border-opacity-75 border-gray-200 rounded-2xl p-8 bg-gray-800 align-middle" >
-            <br>
-        <h2 class="text-xl text-gray-100 font-bold font-serif mb-2 p-4">Sign Up</h2>
+            <br><br><br><br>
+        <h2 class="text-3xl text-gray-100 font-bold mb-2 p-4">Sign Up</h2>
         
     
         <!--
@@ -27,22 +25,22 @@
             {% csrf_token %}
             <div class="mb-4 p-4">
 
-                <div class="block text-gray-100 text-sm font-bold mb-2">{{ form.username.label_tag }}</div>
-                <div> {{ form.username }} </div>
+                <div class="block text-xl text-gray-100 font-bold mb-2">{{ form.username.label_tag }}</div>
+                <div class="text-xl"> {{ form.username }} </div>
                 
                 
             </div>
             <div class="mb-6 p-4">
-                <div class="block text-gray-100 text-sm font-bold mb-2">{{ form.password1.label_tag }}</div>
-                <div> {{ form.password1 }}</div>
+                <div class="block text-gray-100 text-xl font-bold mb-2">{{ form.password1.label_tag }}</div>
+                <div class="text-xl"> {{ form.password1 }}</div>
             </div>
             <div class="mb-6 p-4">
-                <div class="block text-gray-100 text-sm font-bold mb-2">{{ form.password2.label_tag }}</div>
-                <div>{{ form.password2 }} </div>
+                <div class="block text-gray-100 text-xl font-bold mb-2">{{ form.password2.label_tag }}</div>
+                <div class="text-xl">{{ form.password2 }} </div>
             </div>
-           
-            <button type="submit" class="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Sign Up</button>
-            
+            <div class="mb-6 p-4">
+                <button type="submit" class="hover:text-gray-300 bg-green-600 hover:bg-green-800 text-xl text-white font-bold py-2 p-4 rounded focus:outline-none focus:shadow-outline">Sign Up</button>
+            </div>
             
         </div>
         </form>

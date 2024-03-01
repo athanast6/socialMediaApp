@@ -30,7 +30,7 @@ from hooptoday import views
 urlpatterns=[
     path('api/', views.api_root),
 
-    path('', RedirectView.as_view(url='feed/', permanent=True)),
+    path('', views.about),
 
     path('users/', views.UserList.as_view(), name='users'),
     path('users/<int:pk>/', views.UserDetail.as_view(), name='user-detail'),
@@ -38,7 +38,7 @@ urlpatterns=[
     path('posts/', views.PostList.as_view(), name = 'posts'),
     path('posts/<int:pk>/', views.PostDetail.as_view(), name = 'post-detail'),
 
-    path('home/', views.home, name='home'),
+    path('about/', views.about, name='about'),
 
     path('feed/',views.publicFeed ,name='feed'),
     path('createPost/',views.create_post_view,name='create-post'),

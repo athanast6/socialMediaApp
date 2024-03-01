@@ -12,16 +12,31 @@
         <br>
         <br>
         <br>
+        <br>
+        <br>
 
 
         <div class = "rounded-2xl p-8 mb-4 bg-gray-50">
+            
+            <div class = "flex justify-between">
+        <!-- Display content for user -->
+                <div>
+                    <p class="text-lg font-bold p-2 text-black"> {{ username }}'s profile</p>
+                    <p class="text-lg font-bold p-2 text-black"> Wins: {{ userwins }}   Losses: {{ userlosses }}    Games Played: {{ usergames }}</p>
+                    <p class="text-lg font-bold p-2 text-black"> Avg Scored: {{ avg_points }}   Avg Allowed: {{ away_avg_points }}</p>
+                </div>
+                <div class="object-center">
+                    <img src="{% static 'hooptoday/profile_pics/CartoonGuy' %} ({{ user_id }}).png" alt="Profile Picture" width="150px">
 
-        <!-- Display content for authenticated users -->
-        <p class="text-lg font-bold p-2 text-black snap-center"> {{ username }}'s profile</p>
-        <p class="text-lg font-bold p-2 text-black snap-center"> Wins: {{ userwins }}   Losses: {{ userlosses }}    Games Played: {{ usergames }}</p>
-        <p class="text-lg font-bold p-2 text-black snap-center"> Avg Scored: {{ avg_points }}   Avg Allowed: {{ away_avg_points }}</p>
-        
-
+                
+                    {% if user.is_authenticated and user.username == username %}
+                        <a href= 
+                        "{% url 'logout' %}">
+                            <button class ="hover:text-gray-300 text-lg bg-red-700"> Sign Out </button>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
 
@@ -29,15 +44,15 @@
 
         <div class="border-opacity-75 border-gray-200 rounded-2xl p-8 mb-4 bg-gray-50">
             
-            <h2 class="text-xl font-bold font-serif mb-2"> @{{ post.owner }} </h2>
-            <p class="text-sm text-black font-serif mt-2"> {{ post.createdDate }} </p>
+            <h2 class="text-lg font-bold font-serif mb-2"> @{{ post.owner }} </h2>
+            <p class="text-lg text-black font-serif mt-2"> {{ post.createdDate }} </p>
             
             <br>
 
             {% if post.result %}
-                <strong class="align-middle font-serif my-6">{{ post.result }}</strong>
+                <strong class="text-xl align-middle my-6">{{ post.result }}</strong>
                 <div>
-                    <p class="align-middle font-serif"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
+                    <p class="text-3xl align-middle"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
                 </div>
                 <br>
                 {% if user.is_authenticated and user == post.owner %}
@@ -48,7 +63,7 @@
                 {% endif %}
             {% else %}
             
-            <p class="align-middle font-serif">{{ post.text }}</p>
+            <p class="text-3xl align-middle">{{ post.text }}</p>
 
             <div>
                 <br>
@@ -64,7 +79,7 @@
             </div>
             {% endif %}
             
-            <p> Likes: {{ post.likes }} <button>+1</button> </p>
+            <p class ="text-lg"> Likes: {{ post.likes }} <button>+1</button> </p>
             
             
                 
@@ -75,24 +90,24 @@
         <br><br>
 
     <!-- Pagination links -->
-    <div class="pagination container min-w-12 p-6 justify-center">
-        <span class="step-links">
-            {% if page.has_previous %}
-                <a href="?page=1" class="text-white hover:text-gray-200">&laquo; First</a>
-                <a href="?page={{ page.previous_page_number }}" class="text-white hover:text-gray-200">Previous</a>
-            {% endif %}
+        <div class="pagination container min-w-12 p-6 mx-auto">
+            <span class="step-links">
+                {% if page.has_previous %}
+                    <a href="?page=1" class="text-white hover:text-gray-200 text-lg">&laquo; First</a>
+                    <a href="?page={{ page.previous_page_number }}" class="text-white hover:text-gray-200">Previous</a>
+                {% endif %}
 
-            <span class="current" >
-                <p class="text-white">Page {{ page.number }} of {{ page.paginator.num_pages }}</p>
+                <span class="current" >
+                    <p class="text-white text-lg">Page {{ page.number }} of {{ page.paginator.num_pages }}</p>
+                </span>
+
+                {% if page.has_next %}
+                    <a href="?page={{ page.next_page_number }}" class="text-white hover:text-gray-200">Next</a>
+                    <a href="?page={{ page.paginator.num_pages }}" class="text-white hover:text-gray-200">Last &raquo;</a>
+                {% endif %}
             </span>
-
-            {% if page.has_next %}
-                <a href="?page={{ page.next_page_number }}" class="text-white hover:text-gray-200">Next</a>
-                <a href="?page={{ page.paginator.num_pages }}" class="text-white hover:text-gray-200">Last &raquo;</a>
-            {% endif %}
-        </span>
+        </div>
     </div>
-</div>
 </div>  
 
 

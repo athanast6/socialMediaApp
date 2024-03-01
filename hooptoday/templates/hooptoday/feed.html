@@ -2,39 +2,43 @@
 {% load static %}
 {% block content %}
     
-    <div
-        class="bg-black opacity-100"> 
+    <div> 
     
         <br>
         <br>
-    
-    <div class="container mx-auto mt-8 min-w-12 p-2">
-
         <br>
+        <br>
+        <br>
+        <div class = "container mx-auto mt-8 sm:min-w-12 p-2 w-6 ">
+            <p  class = "text-white text-xl">Public Feed</p>
+        </div>
         
+    
+    <div class="container mx-auto mt-8 sm:min-w-12 p-2 w-6 ">
+
     
         {% for post in page.object_list %}
 
             <div class="border-opacity-75 border-gray-200 rounded-2xl p-8 mb-4 bg-gray-50">
             
-                <h2><a href="{% url 'user_posts' user_id=post.owner.id %}" class="text-xl font-bold font-serif mb-2 hover:text-gray-500">
+                <h2><a href="{% url 'user_posts' user_id=post.owner.id %}" class="text-lg font-bold font-serif mb-2 hover:text-gray-500">
                      @{{ post.owner }} </a> </h2>
-                <p class="text-sm text-black font-serif mt-2"> {{ post.createdDate }} </p>
+                <p class="sm:text-sm text-lg text-black font-light mt-2"> {{ post.createdDate }} </p>
                 
                 <br>
 
                 {% if post.result %}
-                    <strong class="align-middle font-serif my-6">{{ post.result }}</strong>
+                <p class="align-middle text-2xl">{{ post.result }}</strong>
                     <div>
-                        <p class="align-middle font-serif"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
+                        <p class="align-middle text-2xl"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
                     </div>
                 {% else %}
                     
-                <p class="align-middle font-serif">{{ post.text }}</p>
+                <p class="align-middle text-2xl">{{ post.text }}</p>
                 {% endif %}
                 
                 <br>
-                <p> Likes: {{ post.likes }} <button>+1</button> </p>
+                <p class="text-lg"> Likes: {{ post.likes }} <button>+1</button> </p>
                 
         
             </div>
@@ -46,15 +50,15 @@
 
 
     <!-- Pagination links -->
-    <div class="pagination container min-w-12 p-6 justify-center">
+    <div class="pagination container min-w-12 p-6 mx-auto">
         <span class="step-links">
             {% if page.has_previous %}
-                <a href="?page=1" class="text-white hover:text-gray-200">&laquo; First</a>
+                <a href="?page=1" class="text-white hover:text-gray-200 text-lg">&laquo; First</a>
                 <a href="?page={{ page.previous_page_number }}" class="text-white hover:text-gray-200">Previous</a>
             {% endif %}
 
             <span class="current" >
-                <p class="text-white">Page {{ page.number }} of {{ page.paginator.num_pages }}</p>
+                <p class="text-white text-lg">Page {{ page.number }} of {{ page.paginator.num_pages }}</p>
             </span>
 
             {% if page.has_next %}
@@ -67,9 +71,10 @@
     
 
 <br>
+</div>
 
 {% endblock %}
-</div>
+
     
 
 

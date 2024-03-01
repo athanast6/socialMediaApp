@@ -105,7 +105,7 @@ def publicFeed(request):
         
         else:
 
-            return redirect('home')
+            return redirect('about')
         
 
     
@@ -113,8 +113,8 @@ def publicFeed(request):
 
     
     
-def home(request):
-    return render(request, 'hooptoday/base.html')
+def about(request):
+    return render(request, 'hooptoday/about.html')
 
 def signUp_view(request):
     if request.method == 'POST':
@@ -270,6 +270,7 @@ def user_posts(request, user_id):
     
         context = {
             'page':page,
+            'user_id':user_id,
             'username':user.username,
             'userwins':userwins,
             'userlosses':userlosses,
@@ -280,7 +281,7 @@ def user_posts(request, user_id):
 
         return render(request,'hooptoday/profile.html', context=context)
     else:
-        return render(request,'hooptoday/profile.html',{'username':user.username})
+        return render(request,'hooptoday/profile.html',{'username':user.username,'user_id':user_id,})
 
 
 
