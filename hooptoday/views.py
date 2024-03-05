@@ -22,7 +22,7 @@ from .permissions import IsOwnerOrReadOnly
 
 from .forms import CreatePost, CreateGamePost, CustomUserCreationForm, ProfilePictureForm
 
-from .cloudstorage import get_blob_service_client_account_key,upload_blob_file,key
+from .cloudstorage import get_blob_service_client_account_key,upload_blob_file
 
 
 
