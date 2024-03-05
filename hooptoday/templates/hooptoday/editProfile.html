@@ -1,0 +1,45 @@
+{% extends 'hooptoday/base.html' %}
+
+
+{% load static %}
+
+
+{% block content %}
+    <br><br><br><br><br>
+    
+
+    
+
+    <div class = "container mx-auto bg-white rounded-lg">
+
+        <h1 class="text-xl font-bold p-2 text-white">Edit Profile</h1>
+
+
+        {% if user.is_authenticated %}
+        <p class="text-xl lg:text-sm font-bold p-2 text-white">@{{ user.username }}</p>
+
+        <div class = "bg-slate-200 rounded-sm">
+            <!-- Display content for authenticated users -->
+            <form action="{% url 'changePicture' %}" method="POST" class ="text-white text-xl" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+                <br>
+                <br>
+                
+                <button type="submit" class="bg-blue-500 hover:bg-blue-800 text-xl lg:text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save</button>
+                
+            </form>
+            {% else %}
+                <p class="text-3xl lg:text-sm font-bold p-2 text-white">Please log in to access the content.</p>
+                <!-- Display content for anonymous users -->
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    <br>
+    
+
+
+{% endblock %}
+

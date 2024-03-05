@@ -24,3 +24,14 @@ class GamePost(models.Model):
     result = models.TextField(max_length=1, blank=False)
 
     likes = models.IntegerField()
+
+    
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_image_url = models.CharField(max_length=255, blank=True, null=True)
+
+    
+    # Add additional fields as needed
+
+    def __str__(self):
+        return self.user.username

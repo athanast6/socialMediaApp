@@ -15,12 +15,14 @@ from rest_framework.reverse import reverse
 from rest_framework.renderers import TemplateHTMLRenderer
 
 
-from .models import Post, GamePost
+from .models import Post, GamePost, UserProfile
 from .serializers import PostSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
-from .forms import CreatePost, CreateGamePost, CustomUserCreationForm
+from .forms import CreatePost, CreateGamePost, CustomUserCreationForm, ProfilePictureForm
+
+from .cloudstorage import get_blob_service_client_account_key,upload_blob_file,key
 
 
 
@@ -118,13 +120,19 @@ def about(request):
 
 def signUp_view(request):
     if request.method == 'POST':
-        print(request)
+
         form = CustomUserCreationForm(request.POST)
+
         if form.is_valid():
 
-            
             form.save()
+
+            print(form.cleaned_data['username'])
+
             return redirect('login')  # Redirect to login page after successful registration
+        
+
+
     else:
         form = CustomUserCreationForm()
     return render(request, 'hooptoday/createUser.html', {'form': form})
@@ -223,65 +231,140 @@ def delete_game_post_view(request,post_id):
     return redirect('feed')
 
 
+def change_profile_picture(request):      
+    
+    #Change profile picture
+    if(request.method == "POST"):
+
+        form = ProfilePictureForm(request.POST, request.FILES)
+            
+        user = request.user
+        username = user.username
+        uploaded_image = request.FILES['profile_picture']
+
+        image_name = uploaded_image.name
+        file_ext = image_name.split('.')[-1]
+
+        print(uploaded_image)
+        
+        # Rename the uploaded file to the username
+        file_name = f"{username}_profile_picture.{file_ext}"
+
+        print(file_name)
+        
+        # Upload the file to Azure Storage
+        #blob_service_client = BlobServiceClient.from_connection_string('your_connection_string')
+        container_name = 'hoop-today-blob'
+        #container_client = blob_service_client.get_container_client(container_name)
+        #blob_client = container_client.get_blob_client(file_name)
+
+        blob_service_client = get_blob_service_client_account_key()
+
+        print(blob_service_client.account_name)
+        
+        upload_blob_file(blob_service_client=blob_service_client,file=uploaded_image,filename=file_name,container_name=container_name)
+
+        print(container_name)
+            
+        # Save the URL to the user's profile
+        profile_image_url = f"https://{blob_service_client.account_name}.blob.core.windows.net/{container_name}/{file_name}"
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
+        user_profile.profile_image_url = profile_image_url
+        user_profile.save()
+
+        return redirect('about')
+    
+    #Show profile picture form
+    else:
+
+        if(request.user.is_authenticated):
+            form = ProfilePictureForm()
+            return render(request, 'hooptoday/editProfile.html', {'form': form})
+        
+        else:
+            return redirect('about')
+
+
+
+
 #PROFILE
 def user_posts(request, user_id):
 
-    user = User.objects.get(id=user_id)
-
-    posts = Post.objects.filter(owner_id=user_id)
-    game_posts = GamePost.objects.filter(owner_id=user_id)
-    if posts.exists() | game_posts.exists():
-
-        
-        userwins=0
-        userlosses=0
-        usergames = 0
-        totalpoints=0
-        otherpoints=0
-        avg_points=0
-        away_avg_points=0
-
-        if game_posts.exists():
-            for game in game_posts:
-                if game.result == "W":
-                    userwins+=1
-                else:
-                    userlosses+=1
-                usergames +=1
-                totalpoints+=game.myScore
-                otherpoints+=game.awayScore
-
-        if usergames != 0:
-            avg_points=totalpoints/usergames
-            away_avg_points=otherpoints/usergames
-            
-        all_posts = list(posts) + list(game_posts)
-
-        # Sort the combined list of posts by creation date
-        all_posts.sort(key=lambda x: x.createdDate, reverse=True)
-
-        posts_per_page = 10
-        paginator = Paginator(all_posts, posts_per_page)
-        page_number = request.GET.get('page', 1)
-
-        # Get the page object for the specified page number
-        page = paginator.get_page(page_number)
+    #Changing profile information
 
     
-        context = {
-            'page':page,
-            'user_id':user_id,
-            'username':user.username,
-            'userwins':userwins,
-            'userlosses':userlosses,
-            'usergames':usergames,
-            'avg_points':avg_points,
-            'away_avg_points':away_avg_points,
-        }
 
-        return render(request,'hooptoday/profile.html', context=context)
+    if request.method == 'POST':
+        if request.user.user_id == user_id:
+            form = ProfilePictureForm()
+            if form.is_valid():
+                form.save()
+                return redirect('profile')  # Redirect to the profile page after successful update
     else:
-        return render(request,'hooptoday/profile.html',{'username':user.username,'user_id':user_id,})
+        form = ProfilePictureForm()
+
+        user = User.objects.get(id=user_id)
+
+        user_profile = UserProfile.objects.get(user=user)
+
+        posts = Post.objects.filter(owner_id=user_id)
+        game_posts = GamePost.objects.filter(owner_id=user_id)
+        if posts.exists() | game_posts.exists():
+
+            
+            userwins=0
+            userlosses=0
+            usergames = 0
+            totalpoints=0
+            otherpoints=0
+            avg_points=0
+            away_avg_points=0
+
+            if game_posts.exists():
+                for game in game_posts:
+                    if game.result == "W":
+                        userwins+=1
+                    else:
+                        userlosses+=1
+                    usergames +=1
+                    totalpoints+=game.myScore
+                    otherpoints+=game.awayScore
+
+            if usergames != 0:
+                avg_points=totalpoints/usergames
+                away_avg_points=otherpoints/usergames
+                
+            all_posts = list(posts) + list(game_posts)
+
+            # Sort the combined list of posts by creation date
+            all_posts.sort(key=lambda x: x.createdDate, reverse=True)
+
+            posts_per_page = 10
+            paginator = Paginator(all_posts, posts_per_page)
+            page_number = request.GET.get('page', 1)
+
+            # Get the page object for the specified page number
+            page = paginator.get_page(page_number)
+
+            
+
+        
+            context = {
+                'form':form,
+                'page':page,
+                'user_id':user_id,
+                'username':user.username,
+                'userwins':userwins,
+                'userlosses':userlosses,
+                'usergames':usergames,
+                'avg_points':avg_points,
+                'away_avg_points':away_avg_points,
+                'user_profile':user_profile,
+            }
+
+            return render(request,'hooptoday/profile.html', context=context)
+        else:
+            return render(request,'hooptoday/profile.html',{'username':user.username,'user_id':user_id,'form':form,'user_profile':user_profile,})
 
 
 

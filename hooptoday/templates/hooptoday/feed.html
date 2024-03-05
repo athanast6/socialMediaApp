@@ -20,9 +20,24 @@
         {% for post in page.object_list %}
 
             <div class="border-opacity-75 border-gray-200 rounded-2xl p-8 mb-4 bg-gray-50">
-            
-                <h2><a href="{% url 'user_posts' user_id=post.owner.id %}" class="text-lg font-bold font-serif mb-2 hover:text-gray-500">
-                     @{{ post.owner }} </a> </h2>
+
+
+                <div class = "flex">
+
+                    {% if post.owner.userprofile.profile_image_url %}
+                        <img class = "inline" src="{{ post.owner.userprofile.profile_image_url }}" width = "80px" alt="Profile Picture">
+                    {% endif %}
+
+                    <a href="{% url 'user_posts' user_id=post.owner.id %}" class="text-xl font-bold hover:text-gray-500 py-4"> 
+                        @{{ post.owner }} 
+                    </a>
+                    
+                </div>
+                
+                    
+                
+                
+
                 <p class="sm:text-sm text-lg text-black font-light mt-2"> {{ post.createdDate }} </p>
                 
                 <br>

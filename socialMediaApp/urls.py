@@ -23,12 +23,17 @@ from django.conf.urls.static import static
 from django.contrib.auth.views import LoginView
 from django.views.generic.base import RedirectView
 
+from django.contrib import admin
+
+
 from hooptoday import views
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns=[
     path('api/', views.api_root),
+
+    path('admin/', admin.site.urls),
 
     path('', views.about),
 
@@ -53,6 +58,8 @@ urlpatterns=[
            template_name='hooptoday/loginUser.html',
            redirect_authenticated_user=True), name='login'),
     path('logout/', views.logout_view, name='logout'),
+
+    path('changePicture',views.change_profile_picture,name='changePicture'),
 
     path('favicon.ico', views.favicon_not_found),
 ]

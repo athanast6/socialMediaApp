@@ -3,39 +3,67 @@
 {% block content %}
 <div class="bg-black opacity-100">
         
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    
 
-
-
-    <div class="container mx-auto mt-8 min-w-12 p-2">
+    <div class="mt-8 min-w-12 p-2">
         
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-
-
-        <div class = "rounded-2xl p-8 mb-4 bg-gray-50">
+        
+        
+        
+        <div class = "rounded-2xl p-8 mb-4 bg-gray-50 drop-shadow-md">
             
-            <div class = "flex justify-between">
         <!-- Display content for user -->
-                <div>
-                    <p class="text-lg font-bold p-2 text-black"> {{ username }}'s profile</p>
-                    <p class="text-lg font-bold p-2 text-black"> Wins: {{ userwins }}   Losses: {{ userlosses }}    Games Played: {{ usergames }}</p>
-                    <p class="text-lg font-bold p-2 text-black"> Avg Scored: {{ avg_points }}   Avg Allowed: {{ away_avg_points }}</p>
-                </div>
-                <div class="object-center">
-                    <img src="{% static 'hooptoday/profile_pics/CartoonGuy' %} ({{ user_id }}).png" alt="Profile Picture" width="150px">
+            
+                <table class = "mx-auto">
+                    <tr>
+                        <th class="p-6">
+                            <h2 class = "text-2xl"> @{{ username }}</h2>
+                        </th>
+                        <th class="p-6">
+                            <!-- Display profile picture -->
+                            {% if user_profile.profile_image_url %}
+                            <img src="{{ user_profile.profile_image_url }}" width = "200px" alt="Profile Picture">
+                            {% else %}
+                            <p>No profile picture uploaded yet.</p>
+                            {% endif %}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="p-6">
+                            <p class="text-lg font-bold p-2 text-black"> Wins: {{ userwins }}
+                                <br>  
+                                Losses: {{ userlosses }}
+                                <br> 
+                                Games Played: {{ usergames }}</p>
+                        </td>
+                        <td class="p-6">
+                            <p class="text-lg font-bold p-2 text-black"> Avg Scored: {{ avg_points }} <br>  Avg Allowed: {{ away_avg_points }}</p>
+                        </td>
+                    </tr>
+                </table>
+                <p class="flex items-center justify-center text-lg w-full rounded-full mx-auto">
+                            
 
+                    <a href= 
+                        "{% url 'changePicture' %}">
+                        Change Picture
+                        </a>
+
+                    <br>
                 
                     {% if user.is_authenticated and user.username == username %}
                         <a href= 
-                        "{% url 'logout' %}">
-                            <button class ="hover:text-gray-300 text-lg bg-red-700"> Sign Out </button>
+                        "{% url 'logout' %}" class ="p-4">
+                                Sign Out 
                         </a>
                     {% endif %}
-                </div>
+                </p>
             </div>
         </div>
 
