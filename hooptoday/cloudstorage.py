@@ -4,19 +4,14 @@ from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 import os
 
 
-
 AZURE_STORAGE_ACCOUNT = os.environ['AZURE_STORAGE_ACCOUNT']
 AZURE_STORAGE_KEY_NAME = os.environ['AZURE_STORAGE_KEY_NAME']
 
-#Remove before building.
-#key = ""
 
 def get_blob_service_client_account_key():
-    # TODO: Replace <storage-account-name> with your actual storage account name
-    account_url = "https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net"
-    #account_url = "https://athanast6.blob.core.windows.net"
-    #shared_access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
-    #credential = key
+
+    account_url = "https://"+AZURE_STORAGE_ACCOUNT+".blob.core.windows.net"
+    
     credential = AZURE_STORAGE_KEY_NAME
 
     # Create the BlobServiceClient object
