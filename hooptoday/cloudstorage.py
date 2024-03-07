@@ -2,10 +2,9 @@ from io import BytesIO
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 
 import os
+AZURE_STORAGE_ACCOUNT = os.environ['AZURE_STORAGE_ACCOUNT'] if 'WEBSITE_HOSTNAME' in os.environ else ""
+AZURE_STORAGE_KEY_NAME = os.environ['AZURE_STORAGE_KEY_NAME'] if 'WEBSITE_HOSTNAME' in os.environ else ""
 
-
-AZURE_STORAGE_ACCOUNT = os.environ['AZURE_STORAGE_ACCOUNT']
-AZURE_STORAGE_KEY_NAME = os.environ['AZURE_STORAGE_KEY_NAME']
 
 def get_blob_service_client_account_key():
 
