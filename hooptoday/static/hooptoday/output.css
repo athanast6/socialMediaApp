@@ -816,6 +816,10 @@ video {
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
+.text-md {
+  font-size: 1.5rem;
+  line-height: 1.8rem;
+}
 
 .text-xl {
   font-size: 2.5rem;

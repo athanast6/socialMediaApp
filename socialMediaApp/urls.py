@@ -42,6 +42,7 @@ urlpatterns=[
 
     path('posts/', views.PostList.as_view(), name = 'posts'),
     path('posts/<int:pk>/', views.PostDetail.as_view(), name = 'post-detail'),
+    path('postState/<int:post_id>/', views.post_state, name='post-state'),
 
     path('about/', views.about, name='about'),
 
@@ -50,8 +51,11 @@ urlpatterns=[
     path('createGamePost/',views.create_game_post_view,name='create-game-post'),
     path('deletePost/<int:post_id>/',views.delete_post_view,name='delete-post'),
     path('deleteGamePost/<int:post_id>/',views.delete_game_post_view,name='delete-game-post'),
+   
 
     path('user/<int:user_id>/', views.user_posts, name='user_posts'),
+    
+    path('likePost/<int:post_id>/',views.like_post,name='like-post'),
 
     path('signup/', views.signUp_view, name='signup'),
     path('login/', LoginView.as_view(

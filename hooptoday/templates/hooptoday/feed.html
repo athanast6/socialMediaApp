@@ -1,9 +1,9 @@
 {% extends 'hooptoday/base.html' %}
 {% load static %}
 {% block content %}
+   
     
-    <div> 
-    
+        <br>
         <br>
         <br>
         <br>
@@ -14,21 +14,21 @@
         </div>
         
     
-    <div class="container mx-auto mt-8 sm:min-w-12 p-2 w-6 ">
+    <div class="container items-center mx-auto">
 
     
         {% for post in page.object_list %}
 
-            <div class="border-opacity-75 border-gray-200 rounded-2xl p-8 mb-4 bg-gray-50">
+            <div class="rounded-2xl border-slate-100 p-6 mb-4" style="background-color:rgb(72, 72, 72)">
+                
 
-
-                <div class = "flex">
+                <div class = "flex items-center">
 
                     {% if post.owner.userprofile.profile_image_url %}
-                        <img class = "inline" src="{{ post.owner.userprofile.profile_image_url }}" width = "80px" alt="Profile Picture">
+                        <img src="{{ post.owner.userprofile.profile_image_url }}" alt="Profile Picture" style="border-radius:9999px;width:75px;height:75px">
                     {% endif %}
 
-                    <a href="{% url 'user_posts' user_id=post.owner.id %}" class="text-xl font-bold hover:text-gray-500 py-4"> 
+                    <a href="{% url 'user_posts' user_id=post.owner.id %}" class="text-lg text-gray-100 p-2" > 
                         @{{ post.owner }} 
                     </a>
                     
@@ -38,23 +38,47 @@
                 
                 
 
-                <p class="sm:text-sm text-lg text-black font-light mt-2"> {{ post.createdDate }} </p>
+                <p class="sm:text-sm text-lg font-light mt-2" style="color:rgb(200, 200, 200)"> {{ post.createdDate }} </p>
                 
-                <br>
 
                 {% if post.result %}
-                <p class="align-middle text-2xl">{{ post.result }}</strong>
+                <p class="align-middle text-2xl text-gray-100">{{ post.result }}</strong>
                     <div>
-                        <p class="align-middle text-2xl"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
+                        <p class="align-middle text-2xl font-bold text-gray-100"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
                     </div>
                 {% else %}
                     
-                <p class="align-middle text-2xl">{{ post.text }}</p>
+                <p class="align-middle text-2xl font-bold text-gray-100">{{ post.text }}</p>
                 {% endif %}
                 
                 <br>
-                <p class="text-lg"> Likes: {{ post.likes }} <button>+1</button> </p>
+
+                <div class = "flex items-center">
+                    {% if user.is_authenticated %}
+                    
+                       
+                        
+                        
+                        <form action="{% url 'like-post' post.id %}" method="POST" class='like-form' data-id="{{ post.id }}">
+
+                            {% csrf_token %}
+                            <button type = "submit">
+    
+                                <img class= "unlike-image" data-id="{{ post.id }}" style="width:40px" src="{% static '/hooptoday/images/like_icon_full.png' %}">
+                            
+                                <img class = "like-image" data-id="{{ post.id }}" style="width:40px;display: none;" src="{% static '/hooptoday/images/like_icon_empty.png' %}">
+    
+                                <p class = "likes-counter" style = "color:whitesmoke; display:inline; font:text-lg" data-id="{{ post.id }}">
+                                    {{ post.likes }}
+                                </p>
+                            
+                            </button>
+    
+                            
+                        </form>
+                    {% endif %}
                 
+                </div>
         
             </div>
         {% endfor %}
@@ -86,7 +110,101 @@
     
 
 <br>
-</div>
+
+
+{% block scripts %}
+
+    <script>
+        
+
+        
+
+        // Handle like button click event (similar to previous example)
+        $('.like-form').submit(function(event){
+
+            event.preventDefault();
+
+            var postId = $(this).data('id');
+
+            var formAction = $(this).attr('action');
+
+
+            $.ajax({
+                type: 'POST',
+                url: formAction,
+                data: {
+                    'postId': postId,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val() // Include CSRF token
+                },
+                success: function(response) {
+                    if (response.success == true) {
+                        updateImage(postId);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                },
+            });
+        });
+
+        $(document).ready(function() {
+            
+
+            // Call updateImage function for each post on page load
+            $('.like-image').each(function() {
+                var postId = $(this).data('id');
+                console.log(postId);
+                updateImage(postId);
+            });
+
+            $('.unlike-image').each(function() {
+                var postId = $(this).data('id');
+                console.log(postId);
+                updateImage(postId);
+            });
+
+
+            
+
+        });
+
+        // Function to fetch initial state and update image
+        function updateImage(postId) {
+
+            $.ajax({
+                type: 'GET',
+                url: '/postState/' + postId + '/',  // Endpoint to fetch initial state
+                success: function(response) {
+                    // Toggle image display based on initial state
+                    console.log(response.likes);
+
+                    var likeImage = $('.like-image[data-id="' + postId + '"]');
+                    var unlikeImage = $('.unlike-image[data-id="' + postId + '"]');
+
+                    var likesCounterText = $('.likes-counter[data-id="' + postId + '"]');
+                    likesCounterText.text(response.likes);
+
+
+                    if (response.is_liked) {
+                        unlikeImage.show();
+                        likeImage.hide();
+                    } else {
+                        likeImage.show();
+                        unlikeImage.hide();
+                    }
+                }
+            });
+        }
+
+
+        
+
+        
+       
+
+    </script>
+
+    {% endblock scripts %}
 
 {% endblock %}
 

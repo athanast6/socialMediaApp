@@ -1,7 +1,6 @@
 {% extends 'hooptoday/base.html' %}
 {% load static %}
 {% block content %}
-<div class="bg-black opacity-100">
         
     <br>
     <br>
@@ -9,136 +8,255 @@
     <br>
     <br>
     <br>
-    
+    <br>
+        
+    <div class = "justify-between rounded-2xl p-8 mb-4" style="background-color:rgb(50, 50, 50)">
 
-    <div class="mt-8 min-w-12 p-2">
+        <aside>
+            <h2 class = "pl-6 text-xl text-gray-100">Profile</h2>
+        </aside>
         
+    <!-- Display content for user -->
         
-        
-        
-        <div class = "rounded-2xl p-8 mb-4 bg-gray-50 drop-shadow-md">
-            
-        <!-- Display content for user -->
-            
-                <table class = "mx-auto">
-                    <tr>
-                        <th class="p-6">
-                            <h2 class = "text-2xl"> @{{ username }}</h2>
-                        </th>
-                        <th class="p-6">
-                            <!-- Display profile picture -->
-                            {% if user_profile.profile_image_url %}
-                            <img src="{{ user_profile.profile_image_url }}" width = "200px" alt="Profile Picture">
-                            {% else %}
-                            <p>No profile picture uploaded yet.</p>
-                            {% endif %}
-                        </th>
-                    </tr>
-                    <tr>
-                        <td class="p-6">
-                            <p class="text-lg font-bold p-2 text-black"> Wins: {{ userwins }}
-                                <br>  
-                                Losses: {{ userlosses }}
-                                <br> 
-                                Games Played: {{ usergames }}</p>
-                        </td>
-                        <td class="p-6">
-                            <p class="text-lg font-bold p-2 text-black"> Avg Scored: {{ avg_points }} <br>  Avg Allowed: {{ away_avg_points }}</p>
-                        </td>
-                    </tr>
-                </table>
-                <p class="flex items-center justify-center text-lg w-full rounded-full mx-auto">
-                            
+            <table class = "mx-auto">
+                <tr>
+                    <th class="p-6">
+                        <h2 class = "text-2xl text-gray-100"> @{{ username }}</h2>
+                    </th>
+                    <th class="p-6">
+                        <!-- Display profile picture -->
+                        {% if user_profile.profile_image_url %}
+                        <img src="{{ user_profile.profile_image_url }}" width = "200px" alt="Profile Picture" style="border-radius:9999px;">
+                        {% else %}
+                        <p>No profile picture uploaded yet.</p>
+                        {% endif %}
+                    </th>
+                </tr>
+                <tr>
+                    <td class="p-6">
+                        <p class="text-lg font-bold p-2 text-gray-100"> Wins: {{ userwins }}
+                            <br>  
+                            Losses: {{ userlosses }}
+                            <br> 
+                            Games Played: {{ usergames }}</p>
+                    </td>
+                    <td class="p-6">
+                        <p class="text-lg font-bold p-2 text-gray-100"> Avg Scored: {{ avg_points }} <br>  Avg Allowed: {{ away_avg_points }}</p>
+                    </td>
+                </tr>
+            </table>
+            <p class="flex items-center justify-center text-lg text-gray-100 w-full rounded-full mx-auto">
+                        
 
+                
+
+                <br>
+            
+                {% if user.is_authenticated and user.username == username %}
                     <a href= 
-                        "{% url 'changePicture' %}">
-                        Change Picture
-                        </a>
-
+                    "{% url 'logout' %}" class ="p-4" style="color:rgb(124, 124, 124)" >
+                            Sign Out 
+                    </a>
                     <br>
-                
-                    {% if user.is_authenticated and user.username == username %}
-                        <a href= 
-                        "{% url 'logout' %}" class ="p-4">
-                                Sign Out 
-                        </a>
-                    {% endif %}
-                </p>
-            </div>
-        </div>
-
-
-        {% for post in page.object_list %}
-
-        <div class="border-opacity-75 border-gray-200 rounded-2xl p-8 mb-4 bg-gray-50">
-            
-            <h2 class="text-lg font-bold font-serif mb-2"> @{{ post.owner }} </h2>
-            <p class="text-lg text-black font-serif mt-2"> {{ post.createdDate }} </p>
-            
-            <br>
-
-            {% if post.result %}
-                <strong class="text-xl align-middle my-6">{{ post.result }}</strong>
-                <div>
-                    <p class="text-3xl align-middle"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
-                </div>
-                <br>
-                {% if user.is_authenticated and user == post.owner %}
-                    <form action="{% url 'delete-game-post' post.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit">Delete</button>
-                    </form>
+                    <a href= 
+                    "{% url 'changePicture' %}" style="color:rgb(124, 124, 124)">
+                    Change Picture
+                    </a>
                 {% endif %}
-            {% else %}
-            
-            <p class="text-3xl align-middle">{{ post.text }}</p>
-
-            <div>
-                <br>
-                {% if user.is_authenticated and user == post.owner %}
-                    <form action="{% url 'delete-post' post.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" 
-                            class="hover:text-gray-300 bg-red-600 text-black font-bold rounded focus:outline-none focus:shadow-outline">
-                            Delete
-                        </button>
-                    </form>
-                {% endif %}
-            </div>
-            {% endif %}
-            
-            <p class ="text-lg"> Likes: {{ post.likes }} <button>+1</button> </p>
-            
-            
-                
-        </div>
-        {% endfor %}
-
-    
-        <br><br>
-
-    <!-- Pagination links -->
-        <div class="pagination container min-w-12 p-6 mx-auto">
-            <span class="step-links">
-                {% if page.has_previous %}
-                    <a href="?page=1" class="text-white hover:text-gray-200 text-lg">&laquo; First</a>
-                    <a href="?page={{ page.previous_page_number }}" class="text-white hover:text-gray-200">Previous</a>
-                {% endif %}
-
-                <span class="current" >
-                    <p class="text-white text-lg">Page {{ page.number }} of {{ page.paginator.num_pages }}</p>
-                </span>
-
-                {% if page.has_next %}
-                    <a href="?page={{ page.next_page_number }}" class="text-white hover:text-gray-200">Next</a>
-                    <a href="?page={{ page.paginator.num_pages }}" class="text-white hover:text-gray-200">Last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
+            </p>
     </div>
-</div>  
+    
 
 
+    {% for post in page.object_list %}
+
+    <div class="border-opacity-75 border-gray-200 rounded-2xl p-8 mb-4" style="background-color:rgb(50, 50, 50)">
+        
+        <h2 class="text-lg text-gray-100 font-bold font-serif mb-2"> @{{ post.owner }} </h2>
+        <p class="text-lg font-serif mt-2" style="color:rgb(200, 200, 200)"> {{ post.createdDate }} </p>
+        
+        
+
+        {% if post.result %}
+            <strong class="text-xl text-gray-100 align-middle my-6">{{ post.result }}</strong>
+            <div>
+                <p class="text-3xl text-gray-100 align-middle"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
+            </div>
+            <br>
+            {% if user.is_authenticated and user == post.owner %}
+                <form action="{% url 'delete-game-post' post.id %}" method="post" >
+                    {% csrf_token %}
+                    <button type="submit" style="color:rgb(164, 164, 164)">Delete</button>
+                </form>
+            {% endif %}
+        {% else %}
+        
+        <p class="text-3xl text-gray-100 align-middle">{{ post.text }}</p>
+
+        <div>
+            <br>
+            {% if user.is_authenticated and user == post.owner %}
+                <form action="{% url 'delete-post' post.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" 
+                    style="color:rgb(164, 164, 164)">
+                        Delete
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class = "flex items-center">
+            {% if user.is_authenticated %}
+            
+               
+                
+                <form action="{% url 'like-post' post.id %}" method="POST" class='like-form' data-id="{{ post.id }}">
+
+                        {% csrf_token %}
+                        <button type = "submit">
+
+                            <img class= "unlike-image" data-id="{{ post.id }}" style="width:40px" src="{% static '/hooptoday/images/like_icon_full.png' %}">
+                        
+                            <img class = "like-image" data-id="{{ post.id }}" style="width:40px;display: none;" src="{% static '/hooptoday/images/like_icon_empty.png' %}">
+
+                            <p class = "likes-counter" style = "color:whitesmoke; display:inline; font:text-lg" data-id="{{ post.id }}">
+                                {{ post.likes }}
+                            </p>
+                        
+                        </button>
+
+                        
+                </form>
+                
+                
+            {% endif %}
+        
+        </div>
+            
+    </div>
+    {% endfor %}
+
+
+    <br><br>
+
+
+    {% if page %}
+    <!-- Pagination links -->
+    <div class="pagination container min-w-12 p-6 mx-auto">
+        <span class="step-links">
+            {% if page.has_previous %}
+                <a href="?page=1" class="text-white hover:text-gray-200 text-lg">&laquo; First</a>
+                <a href="?page={{ page.previous_page_number }}" class="text-white hover:text-gray-200">Previous</a>
+            {% endif %}
+
+            <span class="current" >
+                <p class="text-white text-lg">Page {{ page.number }} of {{ page.paginator.num_pages }}</p>
+            </span>
+
+            {% if page.has_next %}
+                <a href="?page={{ page.next_page_number }}" class="text-white hover:text-gray-200">Next</a>
+                <a href="?page={{ page.paginator.num_pages }}" class="text-white hover:text-gray-200">Last &raquo;</a>
+            {% endif %}
+        </span>
+   
+    </div>
+    {% endif %}
+   
+    {% block scripts %}
+
+    <script>
+        
+
+        
+
+        // Handle like button click event (similar to previous example)
+        $('.like-form').submit(function(event){
+
+            event.preventDefault();
+
+            var postId = $(this).data('id');
+
+            var formAction = $(this).attr('action');
+
+
+            $.ajax({
+                type: 'POST',
+                url: formAction,
+                data: {
+                    'postId': postId,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val() // Include CSRF token
+                },
+                success: function(response) {
+                    if (response.success == true) {
+                        updateImage(postId);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                },
+            });
+        });
+
+        $(document).ready(function() {
+            
+
+            // Call updateImage function for each post on page load
+            $('.like-image').each(function() {
+                var postId = $(this).data('id');
+                console.log(postId);
+                updateImage(postId);
+            });
+
+            $('.unlike-image').each(function() {
+                var postId = $(this).data('id');
+                console.log(postId);
+                updateImage(postId);
+            });
+
+
+            
+
+        });
+
+        // Function to fetch initial state and update image
+        function updateImage(postId) {
+
+            $.ajax({
+                type: 'GET',
+                url: '/postState/' + postId + '/',  // Endpoint to fetch initial state
+                success: function(response) {
+                    // Toggle image display based on initial state
+                    console.log(response.likes);
+
+                    var likeImage = $('.like-image[data-id="' + postId + '"]');
+                    var unlikeImage = $('.unlike-image[data-id="' + postId + '"]');
+
+                    var likesCounterText = $('.likes-counter[data-id="' + postId + '"]');
+                    likesCounterText.text(response.likes);
+
+
+                    if (response.is_liked) {
+                        unlikeImage.show();
+                        likeImage.hide();
+                    } else {
+                        likeImage.show();
+                        unlikeImage.hide();
+                    }
+                }
+            });
+        }
+
+
+        
+
+        
+       
+
+    </script>
+
+    {% endblock scripts %}
 
 
 

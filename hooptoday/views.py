@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group, User
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth import logout
-from django.http import Http404, HttpResponseForbidden, HttpResponseNotFound, HttpResponse
+from django.http import Http404, HttpResponseForbidden, HttpResponseNotFound, HttpResponse, JsonResponse
 from django.views.generic import TemplateView, CreateView
 from django.core.paginator import Paginator
 from django.contrib.auth.forms import UserCreationForm
@@ -98,13 +98,13 @@ def publicFeed(request):
             # Get the page object for the specified page number
             page = paginator.get_page(page_number)
 
-            #context['posts'] = all_posts
-            context = {
-                'page':page
-            }
+            if(request.user.is_authenticated):
+                user_profile = UserProfile.objects.get(user=request.user)
+                liked_posts = user_profile.liked_posts.all()
 
-            return render(request, 'hooptoday/feed.html', context)
-        
+                return render(request, 'hooptoday/feed.html', {'page':page,'liked_posts':liked_posts})
+            else:
+                return render(request, 'hooptoday/feed.html', {'page':page})
         else:
 
             return redirect('about')
@@ -165,8 +165,7 @@ def create_post_view(request):
             # Redirect to a success page or do something else
 
             newPost = Post(owner = request.user,
-                           text = form.cleaned_data['text'],
-                           likes =0)
+                           text = form.cleaned_data['text'])
             
             newPost.save()
 
@@ -196,8 +195,7 @@ def create_game_post_view(request):
             awayTeamName = form.cleaned_data['awayTeamName'],
             myScore = form.cleaned_data['myScore'],
             awayScore = form.cleaned_data['awayScore'],
-            result = form.cleaned_data['result'],
-            likes = 0
+            result = form.cleaned_data['result']
             )
            
         
@@ -294,79 +292,120 @@ def user_posts(request, user_id):
 
     
 
-    if request.method == 'POST':
-        if request.user.user_id == user_id:
-            form = ProfilePictureForm()
-            if form.is_valid():
-                form.save()
-                return redirect('profile')  # Redirect to the profile page after successful update
-    else:
-        form = ProfilePictureForm()
+    
 
-        user = User.objects.get(id=user_id)
+    user = User.objects.get(id=user_id)
 
-        user_profile = UserProfile.objects.get(user=user)
+    user_profile = UserProfile.objects.get(user=user)
 
-        posts = Post.objects.filter(owner_id=user_id)
-        game_posts = GamePost.objects.filter(owner_id=user_id)
-        if posts.exists() | game_posts.exists():
-
-            
-            userwins=0
-            userlosses=0
-            usergames = 0
-            totalpoints=0
-            otherpoints=0
-            avg_points=0
-            away_avg_points=0
-
-            if game_posts.exists():
-                for game in game_posts:
-                    if game.result == "W":
-                        userwins+=1
-                    else:
-                        userlosses+=1
-                    usergames +=1
-                    totalpoints+=game.myScore
-                    otherpoints+=game.awayScore
-
-            if usergames != 0:
-                avg_points=totalpoints/usergames
-                away_avg_points=otherpoints/usergames
-                
-            all_posts = list(posts) + list(game_posts)
-
-            # Sort the combined list of posts by creation date
-            all_posts.sort(key=lambda x: x.createdDate, reverse=True)
-
-            posts_per_page = 10
-            paginator = Paginator(all_posts, posts_per_page)
-            page_number = request.GET.get('page', 1)
-
-            # Get the page object for the specified page number
-            page = paginator.get_page(page_number)
-
-            
+    posts = Post.objects.filter(owner_id=user_id)
+    game_posts = GamePost.objects.filter(owner_id=user_id)
+    if posts.exists() | game_posts.exists():
 
         
-            context = {
-                'form':form,
-                'page':page,
-                'user_id':user_id,
-                'username':user.username,
-                'userwins':userwins,
-                'userlosses':userlosses,
-                'usergames':usergames,
-                'avg_points':avg_points,
-                'away_avg_points':away_avg_points,
-                'user_profile':user_profile,
-            }
+        userwins=0
+        userlosses=0
+        usergames = 0
+        totalpoints=0
+        otherpoints=0
+        avg_points=0
+        away_avg_points=0
 
-            return render(request,'hooptoday/profile.html', context=context)
-        else:
-            return render(request,'hooptoday/profile.html',{'username':user.username,'user_id':user_id,'form':form,'user_profile':user_profile,})
+        if game_posts.exists():
+            for game in game_posts:
+                if game.result == "W":
+                    userwins+=1
+                else:
+                    userlosses+=1
+                usergames +=1
+                totalpoints+=game.myScore
+                otherpoints+=game.awayScore
 
+        if usergames != 0:
+            avg_points=totalpoints/usergames
+            away_avg_points=otherpoints/usergames
+            
+        all_posts = list(posts) + list(game_posts)
 
+        # Sort the combined list of posts by creation date
+        all_posts.sort(key=lambda x: x.createdDate, reverse=True)
+
+        posts_per_page = 10
+        paginator = Paginator(all_posts, posts_per_page)
+        page_number = request.GET.get('page', 1)
+
+        # Get the page object for the specified page number
+        page = paginator.get_page(page_number)
+
+        
+
+    
+        context = {
+            'page':page,
+            'user_id':user_id,
+            'username':user.username,
+            'userwins':userwins,
+            'userlosses':userlosses,
+            'usergames':usergames,
+            'avg_points':avg_points,
+            'away_avg_points':away_avg_points,
+            'user_profile':user_profile,
+        }
+
+        return render(request,'hooptoday/profile.html', context=context)
+    else:
+        return render(request,'hooptoday/profile.html',{'username':user.username,'user_id':user_id,'user_profile':user_profile,})
+
+#LIKE POSTS
+def like_post(request, post_id):
+
+    if request.method == 'POST':
+
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_likes = user_profile.liked_posts.all()
+
+        current_post = Post.objects.get(id=post_id)
+
+        # Check if current post is already in liked posts for user
+        for post in user_likes:
+            if(current_post == post):
+            
+            
+                # Delete or 'unlike' if user already liked the post
+                user_profile.liked_posts.remove(current_post)
+                current_post.likes -= 1
+                current_post.save()
+
+                return JsonResponse({'success':True,'is_liked': True})
+        
+        
+
+        # Add if the user hasn't liked
+        user_profile.liked_posts.add(current_post)
+        current_post.likes += 1
+        current_post.save()
+
+        return JsonResponse({'success':True,'is_liked': False})
+    
+    return redirect('feed')
+
+    
+def post_state(request, post_id):
+
+    if(request.method == "GET"):
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_likes = user_profile.liked_posts.all()
+
+        current_post = Post.objects.get(id=post_id)
+
+        # Check if current post is already in liked posts for user
+        for post in user_likes:
+            if(post == current_post):
+                #return true if liked
+                return JsonResponse({'success':True,'is_liked': True, 'likes':current_post.likes})
+        
+        #else return false if not liked
+        return JsonResponse({'success':True,'is_liked': False, 'likes':current_post.likes})
 
 def favicon_not_found(request):
     return HttpResponseNotFound()

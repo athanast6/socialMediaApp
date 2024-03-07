@@ -11,6 +11,9 @@
 
     <link rel="shortcut icon" type="image/png" href="{% static 'hooptoday/favicon.ico' %}">
 
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <meta charset="UTF-8" name="viewport">
     <title>Hoop Today</title>
     
@@ -20,71 +23,70 @@
     
 
 
-    <body class="bg-black opacity-70">
+    <body class="bg-gray-900">
 
 
-        <header>
-            <nav class="bg-gray-900
-                text-white fixed  
-                w-full top-0 left-0">
-                <div class="flex justify-between">
+        
+        <nav class="bg-gray-900
+            text-white fixed  
+            w-full top-0 left-0">
+            <div class="flex justify-between">
+        
+                <ul class="ml-8 py-4">
             
-                    <ul class="ml-8 py-4">
-                
-                        <li class="inline-block"> 
-                            <a href="{% url 'feed' %}" 
-                            class="hover:text-gray-300 text-3xl font-bold p-4"> 
-                                Hoop Today
-                            </a> 
-                        </li> 
-                        <li class="inline-block"> 
-                            <a href= 
-                            "{% url 'create-post' %}"
+                    <li class="inline-block"> 
+                        <a href="{% url 'feed' %}" 
+                        class="hover:text-gray-300 text-3xl font-bold p-4"> 
+                            Hoop Today
+                        </a> 
+                    </li> 
+                    <li class="inline-block"> 
+                        <a href= 
+                        "{% url 'create-post' %}"
+                        class="hover:text-gray-300 text-lg p-4"> 
+                            Make Post 
+                        </a> 
+                    </li> 
+                    <li class="inline-block"> 
+                        
+                        <a href= 
+                        "{% url 'create-game-post' %}"
                             class="hover:text-gray-300 text-lg p-4"> 
-                                Make Post 
-                            </a> 
-                        </li> 
-                        <li class="inline-block"> 
-                            
-                            <a href= 
-                            "{% url 'create-game-post' %}"
-                                class="hover:text-gray-300 text-lg p-4"> 
-                                Log Game 
-                            </a> 
-                        </li>
+                            Log Game 
+                        </a> 
+                    </li>
 
+                    
+
+
+                    
+                    <li class="inline-block"> 
+
+                        {% if user.is_authenticated %}
+                        <a href= 
+                        "{% url 'user_posts' user_id=user.id %}" class="hover:text-gray-300 text-lg"> @{{ user.username }}</a>
+                        {% else %}
+                        <a href= 
+                        "{% url 'login' %}"
+                        class="hover:text-gray-300 text-lg"> 
+                            Log In 
+                        </a>
+                        {% endif %}
+                    </li>
+
+                    <li class="inline-block"> 
                         
-
-
-                        
-                        <li class="inline-block"> 
-
-                            {% if user.is_authenticated %}
-                            <a href= 
-                            "{% url 'user_posts' user_id=user.id %}" class="hover:text-gray-300 text-lg"> @{{ user.username }}</a>
-                            {% else %}
-                            <a href= 
-                            "{% url 'login' %}"
-                            class="hover:text-gray-300 text-lg"> 
-                                Log In 
-                            </a>
-                            {% endif %}
-                        </li>
-
-                        <li class="inline-block"> 
-                            
-                            <a href= 
-                            "{% url 'about' %}"
-                                class="hover:text-gray-300 text-lg p-4"> 
-                                About
-                            </a> 
-                        </li>
-                        
-                
-                    </ul> 
-                </div> 
-            </nav>
-        </header>
+                        <a href= 
+                        "{% url 'about' %}"
+                            class="hover:text-gray-300 text-lg p-4"> 
+                            About
+                        </a> 
+                    </li>
+                    
+            
+                </ul> 
+            </div> 
+        </nav>
 
     
      

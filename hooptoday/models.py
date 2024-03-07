@@ -8,7 +8,7 @@ class Post(models.Model):
 
     createdDate = models.DateTimeField(auto_now_add=True)
     text = models.TextField()
-    likes = models.IntegerField()
+    likes = models.IntegerField(default=0)
 
 class GamePost(models.Model):
     owner = models.ForeignKey('auth.User', related_name='game_posts', on_delete=models.CASCADE)
@@ -22,16 +22,17 @@ class GamePost(models.Model):
     awayScore = models.IntegerField(default=0)
 
     result = models.TextField(max_length=1, blank=False)
-
-    likes = models.IntegerField()
-
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image_url = models.CharField(max_length=255, blank=True, null=True)
+
+
+    liked_posts = models.ManyToManyField('hooptoday.Post', blank=True)
 
     
     # Add additional fields as needed
 
     def __str__(self):
         return self.user.username
+    
