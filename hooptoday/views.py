@@ -1,4 +1,7 @@
+import os
+from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.contrib.auth import authenticate, login
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth import logout
@@ -20,12 +23,13 @@ from .serializers import PostSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
-from .forms import CreatePost, CreateGamePost, CustomUserCreationForm, ProfilePictureForm
+from .forms import CreatePost, CreateGamePost, CustomUserCreationForm, ProfilePictureForm, NBALegendQuizForm
 
 from .cloudstorage import get_blob_service_client_account_key,upload_blob_file
 
 
-
+from joblib import load
+from .utils import *
 
 
 
@@ -127,9 +131,19 @@ def signUp_view(request):
 
             form.save()
 
-            print(form.cleaned_data['username'])
+            print("created")
 
-            return redirect('login')  # Redirect to login page after successful registration
+            # Authenticate the user
+            user = authenticate(username=form.cleaned_data['username'],
+                                password=form.cleaned_data['password1'])
+            print("authenticated")
+            
+            if user is not None:
+                # Log in the user
+                login(request, user)
+                
+                # Redirect to a success page or dashboard
+                return redirect('feed')  # Adjust this to your dashboard URL
         
 
 
@@ -389,6 +403,38 @@ def like_post(request, post_id):
     
     return redirect('feed')
 
+def like_game_post(request, post_id):
+
+    if request.method == 'POST':
+
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_likes = user_profile.liked_game_posts.all()
+
+        current_post = GamePost.objects.get(id=post_id)
+
+        # Check if current post is already in liked posts for user
+        for post in user_likes:
+            if(current_post == post):
+            
+            
+                # Delete or 'unlike' if user already liked the post
+                user_profile.liked_game_posts.remove(current_post)
+                current_post.likes -= 1
+                current_post.save()
+
+                return JsonResponse({'success':True,'is_liked': True})
+        
+        
+
+        # Add if the user hasn't liked
+        user_profile.liked_game_posts.add(current_post)
+        current_post.likes += 1
+        current_post.save()
+
+        return JsonResponse({'success':True,'is_liked': False})
+    
+    return redirect('feed')
+
     
 def post_state(request, post_id):
 
@@ -406,11 +452,71 @@ def post_state(request, post_id):
         
         #else return false if not liked
         return JsonResponse({'success':True,'is_liked': False, 'likes':current_post.likes})
+    
+def game_post_state(request, post_id):
+
+    if(request.method == "GET"):
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_likes = user_profile.liked_game_posts.all()
+
+        current_post = GamePost.objects.get(id=post_id)
+
+        # Check if current post is already in liked posts for user
+        for post in user_likes:
+            if(post == current_post):
+                #return true if liked
+                return JsonResponse({'success':True,'is_liked': True, 'likes':current_post.likes})
+        
+        #else return false if not liked
+        return JsonResponse({'success':True,'is_liked': False, 'likes':current_post.likes})
 
 def favicon_not_found(request):
     return HttpResponseNotFound()
-   
-   
+
+
+def nba_legend_quiz(request):
+
+    if(request.method == "POST"):
+        
+        form = NBALegendQuizForm(request.POST)
+        if form.is_valid():
+            # Extract input data from the form
+            input_data = {
+                'Age': form.cleaned_data['Age'],
+                'Three_rtg': form.cleaned_data['Three_rtg'],
+                'Two_rtg': form.cleaned_data['Two_rtg'],
+                'Free_throw_rtg': form.cleaned_data['Free_throw_rtg'],
+                'Pass_rtg': form.cleaned_data['Pass_rtg'],
+                'draw_foul_rtg': form.cleaned_data['draw_foul_rtg'],
+                'take_three_prob': form.cleaned_data['take_three_prob'],
+                'take_two_prob': form.cleaned_data['take_two_prob'],
+                'make_ast_prob': form.cleaned_data['make_ast_prob'],
+                'turnover_prob': form.cleaned_data['turnover_prob'],
+                'stamina': form.cleaned_data['stamina'],
+                'usageRate': form.cleaned_data['usageRate'],
+                'rebound_rtg': form.cleaned_data['rebound_rtg'],
+                'steal_rtg': form.cleaned_data['steal_rtg'],
+                'block_rtg': form.cleaned_data['block_rtg'],
+                'height': form.cleaned_data['height'],
+            }
+            # Convert input data to list of values (in the same order as model input)
+            input_values = [input_data[attr] for attr in input_data]
+
+
+            # Make prediction for ONE PLAYER
+            predicted_player = legend_model.predict([input_values])[0]
+            # Return the predicted player as JSON response
+            return JsonResponse({'predicted_player': predicted_player})
+        
+            #return render(request, 'hooptoday/nbaLegendQuiz.html', {'myNbaLegends': predicted_player})
+        
+
+    else:
+       
+       #return the form
+       form = NBALegendQuizForm()
+
+       return render(request, 'hooptoday/nbaLegendQuiz.html', {'form': form})
 
     
     

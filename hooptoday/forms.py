@@ -50,3 +50,21 @@ class CustomUserCreationForm(UserCreationForm):
 class ProfilePictureForm(forms.Form):
     profile_picture = forms.ImageField()
 
+
+class NBALegendQuizForm(forms.Form):
+    Age = forms.IntegerField(label='Age')
+    Three_rtg = forms.IntegerField(label='Three-point Rating')
+    Two_rtg = forms.IntegerField(label='Two-point Rating')
+    Free_throw_rtg = forms.IntegerField(label='Free Throw Rating')
+    Pass_rtg = forms.IntegerField(label='Passing Rating')
+    draw_foul_rtg = forms.IntegerField(label='Draw Foul Rating')
+    take_three_prob = forms.IntegerField(label='Take Three Probability')
+    take_two_prob = forms.IntegerField(label='Take Two Probability')
+    make_ast_prob = forms.IntegerField(label='Make Assist Probability')
+    turnover_prob = forms.IntegerField(label='Turnover Probability')
+    stamina = forms.IntegerField(label='Stamina')
+    usageRate = forms.IntegerField(label='Usage Rate')
+    rebound_rtg = forms.IntegerField(label='Rebound Rating')
+    steal_rtg = forms.IntegerField(label='Steal Rating')
+    block_rtg = forms.IntegerField(label='Block Rating')
+    height = forms.IntegerField(label='Height')

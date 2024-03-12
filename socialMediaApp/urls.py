@@ -43,6 +43,7 @@ urlpatterns=[
     path('posts/', views.PostList.as_view(), name = 'posts'),
     path('posts/<int:pk>/', views.PostDetail.as_view(), name = 'post-detail'),
     path('postState/<int:post_id>/', views.post_state, name='post-state'),
+    path('gamePostState/<int:post_id>/', views.game_post_state, name='game-post-state'),
 
     path('about/', views.about, name='about'),
 
@@ -56,6 +57,7 @@ urlpatterns=[
     path('user/<int:user_id>/', views.user_posts, name='user_posts'),
     
     path('likePost/<int:post_id>/',views.like_post,name='like-post'),
+    path('likeGamePost/<int:post_id>/',views.like_game_post,name='like-game-post'),
 
     path('signup/', views.signUp_view, name='signup'),
     path('login/', LoginView.as_view(
@@ -66,6 +68,8 @@ urlpatterns=[
     path('changePicture',views.change_profile_picture,name='changePicture'),
 
     path('favicon.ico', views.favicon_not_found),
+
+    path('nbaLegendQuiz/',views.nba_legend_quiz,name='legend-quiz'),
 ]
 
 

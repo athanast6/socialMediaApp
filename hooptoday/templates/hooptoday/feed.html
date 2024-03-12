@@ -42,18 +42,42 @@
                 
 
                 {% if post.result %}
-                <p class="align-middle text-2xl text-gray-100">{{ post.result }}</strong>
+                    <p class="align-middle text-2xl text-gray-100">{{ post.result }}</strong>
                     <div>
                         <p class="align-middle text-2xl font-bold text-gray-100"> {{ post.myTeamName }} {{ post.myScore }} - {{ post.awayTeamName }} {{ post.awayScore }} </p>
                     </div>
-                {% else %}
-                    
-                <p class="align-middle text-2xl font-bold text-gray-100">{{ post.text }}</p>
-                {% endif %}
-                
-                <br>
+                    <br>
+                    <div class = "flex items-center">
+                        {% if user.is_authenticated %}
+                            <form action="{% url 'like-game-post' post.id %}" method="POST" class='like-game-form' data-id="{{ post.id }}">
+            
+                                    {% csrf_token %}
+                                    <button type = "submit">
+            
+                                        <img class= "unlike-game-image" data-id="{{ post.id }}" style="width:40px" src="{% static 'hooptoday/images/like_icon_full.png' %}">
+                                
+                                        <img class = "like-game-image" data-id="{{ post.id }}" style="width:40px;display:none;" src="{% static 'hooptoday/images/like_icon_empty.png' %}">
+            
+                                        <p class = "likes-game-counter" style = "color:whitesmoke; display:inline; font:text-lg" data-id="{{ post.id }}">
+                                            {{ post.likes }}
+                                        </p>
+                                    
+                                    </button>
+                                </form>
+                        {% endif %}
+                    </div>
 
-                <div class = "flex items-center">
+
+
+
+                {% elif post.text %}
+                    
+                    <p class="align-middle text-2xl font-bold text-gray-100">{{ post.text }}</p>
+                    
+                    
+                    <br>
+
+                    <div class = "flex items-center">
                     {% if user.is_authenticated %}
                     
                        
@@ -78,7 +102,8 @@
                         </form>
                     {% endif %}
                 
-                </div>
+                    </div>
+                {% endif %}
         
             </div>
         {% endfor %}
@@ -115,9 +140,9 @@
 {% block scripts %}
 
     <script>
-        
+            
 
-        
+            
 
         // Handle like button click event (similar to previous example)
         $('.like-form').submit(function(event){
@@ -147,6 +172,34 @@
             });
         });
 
+
+        $('.like-game-form').submit(function(event){
+
+            event.preventDefault();
+
+            var postId = $(this).data('id');
+
+            var formAction = $(this).attr('action');
+
+
+            $.ajax({
+                type: 'POST',
+                url: formAction,
+                data: {
+                    'postId': postId,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val() // Include CSRF token
+                },
+                success: function(response) {
+                    if (response.success == true) {
+                        updateGameImage(postId);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                },
+            });
+        });
+
         $(document).ready(function() {
             
 
@@ -161,6 +214,19 @@
                 var postId = $(this).data('id');
                 console.log(postId);
                 updateImage(postId);
+            });
+
+            // Call updateImage function for each post on page load
+            $('.like-game-image').each(function() {
+                var postId = $(this).data('id');
+                console.log(postId);
+                updateGameImage(postId);
+            });
+
+            $('.unlike-game-image').each(function() {
+                var postId = $(this).data('id');
+                console.log(postId);
+                updateGameImage(postId);
             });
 
 
@@ -196,11 +262,38 @@
             });
         }
 
+        function updateGameImage(postId) {
+
+        $.ajax({
+            type: 'GET',
+            url: '/gamePostState/' + postId + '/',  // Endpoint to fetch initial state
+            success: function(response) {
+                // Toggle image display based on initial state
+                console.log(response.likes);
+
+                var likeImage = $('.like-game-image[data-id="' + postId + '"]');
+                var unlikeImage = $('.unlike-game-image[data-id="' + postId + '"]');
+
+                var likesCounterText = $('.likes-game-counter[data-id="' + postId + '"]');
+                likesCounterText.text(response.likes);
+
+
+                if (response.is_liked) {
+                    unlikeImage.show();
+                    likeImage.hide();
+                } else {
+                    likeImage.show();
+                    unlikeImage.hide();
+                }
+            }
+        });
+    }
+
 
         
 
         
-       
+    
 
     </script>
 

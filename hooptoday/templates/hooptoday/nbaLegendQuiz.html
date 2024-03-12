@@ -1,0 +1,22 @@
+<!-- input_player_data.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Input Player Data</title>
+</head>
+<body>
+    <h2>Input Player Data</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+
+    <br>
+    <br>
+
+    <h3>
+        {{ myNbaLegends }}
+    </h3>
+</body>
+</html>
