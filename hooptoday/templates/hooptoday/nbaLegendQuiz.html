@@ -1,22 +1,28 @@
-<!-- input_player_data.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Input Player Data</title>
-</head>
-<body>
-    <h2>Input Player Data</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+{% extends 'hooptoday/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+{% block content %}
 
-    <br>
-    <br>
 
-    <h3>
-        {{ myNbaLegends }}
-    </h3>
-</body>
-</html>
+<br><br><br><br><br><br>
+<div class = "quiz">
+    <div class="container mx-auto mt-8">
+        <h1 class="text-white text-2xl mb-4">Who is your nba legend?</h1>
+        <div class="max-w-lg mx-auto">
+            <form method = "POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+            
+                <br>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
+            </form>
+        
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

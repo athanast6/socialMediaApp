@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'hooptoday.apps.HooptodayConfig',
+    'crispy_forms',
+    'crispy_tailwind',
 ]
 
 MIDDLEWARE = [
@@ -146,4 +148,6 @@ LOGIN_URL = '/login/'  # Specify the login URL
 LOGIN_REDIRECT_URL = '/feed/'  # Redirect URL after successful login
 
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 
+CRISPY_TEMPLATE_PACK = "tailwind"

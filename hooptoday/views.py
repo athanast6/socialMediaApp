@@ -505,8 +505,11 @@ def nba_legend_quiz(request):
 
             # Make prediction for ONE PLAYER
             predicted_player = legend_model.predict([input_values])[0]
-            # Return the predicted player as JSON response
-            return JsonResponse({'predicted_player': predicted_player})
+
+
+            #include youtube api key
+            yt_api_key = os.environ['YOUTUBE_DATA_API_KEY']
+            return render(request, 'hooptoday/myNbaLegend.html',{'predicted_player': predicted_player,'YOUTUBE_DATA_API_KEY':yt_api_key})
         
             #return render(request, 'hooptoday/nbaLegendQuiz.html', {'myNbaLegends': predicted_player})
         

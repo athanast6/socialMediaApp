@@ -1,0 +1,87 @@
+{% extends 'hooptoday/base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+
+<br><br><br><br><br><br>
+<div class =  "columns-1">
+    <p class = "text-xl text-white content-center p-4" id="player">
+        Predicted Player: {{ predicted_player }}
+    </p>
+</div>
+
+<div>
+
+    <div id="videos"></div>
+
+</div>
+
+
+
+<script>
+    // Function to fetch video search results from YouTube Data API
+    function fetchVideos(query) {
+        // Replace 'YOUR_API_KEY' with your actual API key
+        // not to be used in production
+        const apiKey = "{{ YOUTUBE_DATA_API_KEY }}"; // Use Django template syntax to access environment variable
+        const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&part=snippet&q=${query}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const videosDiv = document.getElementById('videos');
+                videosDiv.innerHTML = ''; // Clear previous results
+
+                data.items.forEach(item => {
+                    const videoId = item.id.videoId;
+                    const videoTitle = item.snippet.title;
+                    const thumbnailUrl = item.snippet.thumbnails.default.url;
+
+                    // Create a link to the video using the video ID
+                    const videoLink = `https://www.youtube.com/watch?v=${videoId}`;
+
+                    // Create an image element for the video thumbnail
+                    const img = document.createElement('img');
+                    img.src = thumbnailUrl;
+                    
+
+                    // Create a link element for the video
+                    const link = document.createElement('a');
+                    link.href = videoLink;
+                    link.textContent = videoTitle;
+                    link.classList.add("text-white");
+
+                    const videoContainer = document.createElement('div');
+                    videoContainer.classList.add("rounded-2xl");
+                    videoContainer.classList.add("p-8");
+                    videoContainer.classList.add("mb-4");
+                    videoContainer.classList.add("bg-gray-800");          
+                    
+
+                    // Append the thumbnail and link to the videosDiv
+                    videoContainer.appendChild(img);
+                    videoContainer.appendChild(link);
+
+                    videosDiv.appendChild(videoContainer);
+                    videosDiv.appendChild(document.createElement('br'));
+                });
+            })
+            .catch(error => console.error('Error fetching videos:', error));
+    }
+
+    // Call fetchVideos function with your search term
+    var player = document.getElementById('player').textContent + ' nba';
+    fetchVideos(player);
+</script>
+
+
+
+
+
+
+
+
+
+{% endblock %}
