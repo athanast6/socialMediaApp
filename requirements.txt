@@ -23,11 +23,13 @@ npx==0.1.2
 numpy==1.26.4
 optional-django==0.1.0
 packaging==23.2
+pandas==2.2.1
 pillow==10.2.0
 portalocker==2.8.2
 psycopg2==2.9.9
 pycparser==2.21
 PyJWT==2.8.0
+python-dateutil==2.9.0.post0
 python-env==1.0.0
 pytz==2024.1
 rcssmin==1.1.1

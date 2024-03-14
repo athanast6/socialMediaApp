@@ -508,8 +508,8 @@ def nba_legend_quiz(request):
 
 
             #include youtube api key
-            yt_api_key = os.environ['YOUTUBE_DATA_API_KEY']
-            return render(request, 'hooptoday/myNbaPlayer.html',{'predicted_player': predicted_player,'YOUTUBE_DATA_API_KEY':yt_api_key})
+            #yt_api_key = os.environ['YOUTUBE_DATA_API_KEY']
+            return render(request, 'hooptoday/myNbaPlayer.html',{'predicted_player': predicted_player})
         
 
     else:
@@ -546,16 +546,24 @@ def nba_player_quiz(request):
                 'height': form.cleaned_data['height'],
             }
             # Convert input data to list of values (in the same order as model input)
-            input_values = [input_data[attr] for attr in input_data]
+            input_values = [[input_data[attr] for attr in input_data]]
 
 
             # Make prediction for ONE PLAYER
-            predicted_player = nba_player_model.predict([input_values])[0]
+            #predicted_player = nba_player_model.predict([input_values])[0]
 
+            # Use the model to find the top 5 closest players
+            distances, indices = nba_player_model.kneighbors(input_values)
 
+            # Return the top 10 closest players as JSON response
+            closest_players = []  # List to store closest player names
+            for index in indices[0]:
+                closest_players.append(rosters.iloc[index]['Name'])
+
+            predicted_player = closest_players[0]
             #include youtube api key
-            yt_api_key = os.environ['YOUTUBE_DATA_API_KEY']
-            return render(request, 'hooptoday/myNbaPlayer.html',{'predicted_player': predicted_player,'YOUTUBE_DATA_API_KEY':yt_api_key})
+            #yt_api_key = os.environ['YOUTUBE_DATA_API_KEY']
+            return render(request, 'hooptoday/myNbaPlayer.html',{'predicted_player': predicted_player, 'closest_players': closest_players})
         
 
     else:

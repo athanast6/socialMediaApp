@@ -7,15 +7,31 @@
 
 <br><br><br><br><br><br>
 <div class =  "columns-1">
+
+    
     <p class = "text-xl text-white content-center p-4" id="player">
         Predicted Player: {{ predicted_player }}
     </p>
+    
 </div>
 
 <div>
 
     <div id="videos"></div>
 
+</div>
+
+<div class="flex justify center">
+    {% if closest_players %}
+    <p class = "text-xl text-white text-center p-4">
+        Closest Players:
+        <br>
+        {% for player in closest_players %}
+            {{ player }}
+            <br>
+        {% endfor %}
+    </p>
+    {% endif %}
 </div>
 
 
@@ -25,7 +41,8 @@
     function fetchVideos(query) {
         // Replace 'YOUR_API_KEY' with your actual API key
         // not to be used in production
-        const apiKey = "{{ YOUTUBE_DATA_API_KEY }}"; // Use Django template syntax to access environment variable
+        //const apiKey = "{{ YOUTUBE_DATA_API_KEY }}"; // Use Django template syntax to access environment variable
+        const apiKey = "AIzaSyDmvA7oHSzWNZ-uIJjQaq4kw4o_tV-X8fY";
         const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&part=snippet&q=${query}`;
 
         fetch(url)
@@ -45,6 +62,7 @@
                     // Create an image element for the video thumbnail
                     const img = document.createElement('img');
                     img.src = thumbnailUrl;
+                    img.classList.add("w-full");
                     
 
                     // Create a link element for the video
@@ -52,6 +70,7 @@
                     link.href = videoLink;
                     link.textContent = videoTitle;
                     link.classList.add("text-white");
+                    link.classList.add("text-xl");
 
                     const videoContainer = document.createElement('div');
                     videoContainer.classList.add("rounded-2xl");
@@ -72,7 +91,7 @@
     }
 
     // Call fetchVideos function with your search term
-    var player = document.getElementById('player').textContent + ' nba';
+    var player = document.getElementById('player').textContent + ' nba highlights';
     fetchVideos(player);
 </script>
 

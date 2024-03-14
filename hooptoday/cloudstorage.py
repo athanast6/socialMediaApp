@@ -29,3 +29,15 @@ def upload_blob_file(blob_service_client: BlobServiceClient, file, filename, con
         blob_client.delete_blob()
     
     container_client.upload_blob(name=filename, data=file)
+
+
+def download_blob_file(blob_service_client: BlobServiceClient, filename, container_name: str):
+    # Get a reference to the CSV file Blob
+    container_client = blob_service_client.get_container_client(container=container_name)
+
+    blob_client = container_client.get_blob_client(blob=filename)
+
+    # Download the CSV file to a local buffer or stream
+    return blob_client.download_blob()
+
+    
