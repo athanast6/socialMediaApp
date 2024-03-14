@@ -522,6 +522,16 @@ def nba_legend_quiz(request):
 
 def nba_player_quiz(request):
 
+
+    # Check if roster data is already stored in the session
+    if 'roster_data' not in request.session:
+        # Load roster data and store it in the session
+        rosters = get_rosters()
+        request.session['rosters'] = rosters
+    else:
+        # Retrieve roster data from session
+        rosters = request.session['rosters']
+
     if(request.method == "POST"):
         
         form = NBAPlayerQuizForm(request.POST)

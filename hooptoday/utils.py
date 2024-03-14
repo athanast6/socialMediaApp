@@ -48,5 +48,3 @@ def get_rosters():
 
     return df
 
-
-rosters = get_rosters()
