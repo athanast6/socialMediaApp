@@ -69,7 +69,8 @@ urlpatterns=[
 
     path('favicon.ico', views.favicon_not_found),
 
-    path('nbaLegendQuiz/',views.nba_legend_quiz,name='legend-quiz'),
+    path('nbaLegendQuiz/',views.nba_legend_quiz,name='nba-legend-quiz'),
+    path('nbaPlayerQuiz/',views.nba_player_quiz,name='nba-player-quiz'),
 ]
 
 

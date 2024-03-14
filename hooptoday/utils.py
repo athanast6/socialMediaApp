@@ -8,3 +8,8 @@ import os
 # Construct the path to the model file
 legend_model_path = os.path.join(settings.BASE_DIR, 'ml_models', 'my_nba_legend_model.pkl')
 legend_model = load(legend_model_path)
+
+
+
+nba_player_model_path = os.path.join(settings.BASE_DIR, 'ml_models', 'which_nba_player_model.pkl')
+nba_player_model = load(nba_player_model_path)

@@ -54,7 +54,7 @@ class ProfilePictureForm(forms.Form):
     profile_picture = forms.ImageField()
 
 
-class NBALegendQuizForm(forms.Form):
+class NBAPlayerQuizForm(forms.Form):
     Age = forms.IntegerField(label='Age', initial=25)
     Three_rtg = forms.IntegerField(label='Three-point Rating', initial=70)
     Two_rtg = forms.IntegerField(label='Two-point Rating', initial=70)

@@ -23,7 +23,7 @@ from .serializers import PostSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
-from .forms import CreatePost, CreateGamePost, CustomUserCreationForm, ProfilePictureForm, NBALegendQuizForm
+from .forms import CreatePost, CreateGamePost, CustomUserCreationForm, ProfilePictureForm, NBAPlayerQuizForm
 
 from .cloudstorage import get_blob_service_client_account_key,upload_blob_file
 
@@ -478,7 +478,7 @@ def nba_legend_quiz(request):
 
     if(request.method == "POST"):
         
-        form = NBALegendQuizForm(request.POST)
+        form = NBAPlayerQuizForm(request.POST)
         if form.is_valid():
             # Extract input data from the form
             input_data = {
@@ -509,17 +509,60 @@ def nba_legend_quiz(request):
 
             #include youtube api key
             yt_api_key = os.environ['YOUTUBE_DATA_API_KEY']
-            return render(request, 'hooptoday/myNbaLegend.html',{'predicted_player': predicted_player,'YOUTUBE_DATA_API_KEY':yt_api_key})
-        
-            #return render(request, 'hooptoday/nbaLegendQuiz.html', {'myNbaLegends': predicted_player})
+            return render(request, 'hooptoday/myNbaPlayer.html',{'predicted_player': predicted_player,'YOUTUBE_DATA_API_KEY':yt_api_key})
         
 
     else:
        
        #return the form
-       form = NBALegendQuizForm()
+       form = NBAPlayerQuizForm()
 
-       return render(request, 'hooptoday/nbaLegendQuiz.html', {'form': form})
+       return render(request, 'hooptoday/nbaPlayerQuiz.html', {'type': "Legend", 'form': form})
 
+
+def nba_player_quiz(request):
+
+    if(request.method == "POST"):
+        
+        form = NBAPlayerQuizForm(request.POST)
+        if form.is_valid():
+            # Extract input data from the form
+            input_data = {
+                'Age': form.cleaned_data['Age'],
+                'Three_rtg': form.cleaned_data['Three_rtg'],
+                'Two_rtg': form.cleaned_data['Two_rtg'],
+                'Free_throw_rtg': form.cleaned_data['Free_throw_rtg'],
+                'Pass_rtg': form.cleaned_data['Pass_rtg'],
+                'draw_foul_rtg': form.cleaned_data['draw_foul_rtg'],
+                'take_three_prob': form.cleaned_data['take_three_prob'],
+                'take_two_prob': form.cleaned_data['take_two_prob'],
+                'make_ast_prob': form.cleaned_data['make_ast_prob'],
+                'turnover_prob': form.cleaned_data['turnover_prob'],
+                'stamina': form.cleaned_data['stamina'],
+                'usageRate': form.cleaned_data['usageRate'],
+                'rebound_rtg': form.cleaned_data['rebound_rtg'],
+                'steal_rtg': form.cleaned_data['steal_rtg'],
+                'block_rtg': form.cleaned_data['block_rtg'],
+                'height': form.cleaned_data['height'],
+            }
+            # Convert input data to list of values (in the same order as model input)
+            input_values = [input_data[attr] for attr in input_data]
+
+
+            # Make prediction for ONE PLAYER
+            predicted_player = nba_player_model.predict([input_values])[0]
+
+
+            #include youtube api key
+            yt_api_key = os.environ['YOUTUBE_DATA_API_KEY']
+            return render(request, 'hooptoday/myNbaPlayer.html',{'predicted_player': predicted_player,'YOUTUBE_DATA_API_KEY':yt_api_key})
+        
+
+    else:
+       
+       #return the form
+       form = NBAPlayerQuizForm()
+
+       return render(request, 'hooptoday/nbaPlayerQuiz.html', {'type': "Player",'form': form})
     
     
