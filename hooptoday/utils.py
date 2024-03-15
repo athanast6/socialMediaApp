@@ -6,10 +6,10 @@ from django.conf import settings
 from joblib import load
 
 import pandas as pd
+import redis
+import csv
 
-from .cloudstorage import download_blob_file, get_blob_service_client_account_key
-
-rosters_file_name = "NBARatingsMar2024.csv"
+rosters_file_path = os.path.join(settings.BASE_DIR, 'static', 'NBARatingsMar2024.csv')
 
 # Load the model during application initialization
 # Construct the path to the model file
@@ -24,27 +24,24 @@ nba_player_model = load(nba_player_model_path)
 
 
 def get_rosters():
-    container_name = 'hoop-today-blob'
-    #container_client = blob_service_client.get_container_client(container_name)
-    #blob_client = container_client.get_blob_client(file_name)
-
-    blob_service_client = get_blob_service_client_account_key()
-
-    print(blob_service_client.account_name)
-
-    file_name = rosters_file_name
-    
-    file = download_blob_file(blob_service_client=blob_service_client,filename=file_name,container_name=container_name)
-
-    print(container_name)
-
-    nba_ratings = file.readall()
+    rosters = pd.read_csv(rosters_file_path)
+    return(rosters)
 
 
-    df = pd.read_csv(io.BytesIO(nba_ratings))
 
-    # Now you can work with the DataFrame 'df' containing the CSV data
-    print(df.head())
 
-    return df
+# Connect to Redis
+def get_roster_data():
+    redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+    # Check if data exists in cache
+    csv_data = redis_client.get('csv_data')
+    if csv_data:
+        return csv_data.decode('utf-8')  # Decode bytes to string
+    else:
+        # Fetch CSV data from source (e.g., file system, database)
+        rosters = get_rosters()
+        # Store CSV data in cache with expiry time
+        redis_client.setex(rosters, 3600, csv_data)  # Expires in 1 hour
+        return csv_data
+
 
