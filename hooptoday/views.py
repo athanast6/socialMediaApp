@@ -31,6 +31,8 @@ from .cloudstorage import get_blob_service_client_account_key,upload_blob_file
 from joblib import load
 from .utils import *
 
+import pandas as pd
+
 
 
 def error_404_view(request, exception):

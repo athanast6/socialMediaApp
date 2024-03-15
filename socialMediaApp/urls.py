@@ -27,7 +27,6 @@ from django.contrib import admin
 
 
 from hooptoday import views
-from hoopcitylite.views import hoopCityLite
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -73,10 +72,6 @@ urlpatterns=[
     path('nbaLegendQuiz/',views.nba_legend_quiz,name='nba-legend-quiz'),
     path('nbaPlayerQuiz/',views.nba_player_quiz,name='nba-player-quiz'),
 
-
-
-    #hoop city lite
-    path('hoopCityLite/', hoopCityLite, name='hoop-city')
 ]
 
 
@@ -85,4 +80,3 @@ urlpatterns += [
 ]
 
 handler404 = views.error_404_view
-
