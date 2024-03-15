@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'hooptoday.apps.HooptodayConfig',
     'crispy_forms',
     'crispy_tailwind',
+    'hoopcitylite.apps.HoopcityliteConfig',
 ]
 
 MIDDLEWARE = [

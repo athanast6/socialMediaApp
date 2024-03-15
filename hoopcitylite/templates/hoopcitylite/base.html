@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+    
+<head>
+    
+    <link rel="stylesheet" 
+        href= "{% static 'hoopcitylite/output.css' %}" />
+   
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'hoopcitylite/favicon.ico' %}">
+
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <meta charset="UTF-8" name="viewport">
+    <title>Hoop Today</title>
+    
+</head>
+
+
+<body class="bg-gray-900">
+
+
+    {% block content %}
+    {% endblock %}
+
+
+
+</body>
