@@ -1,0 +1,93 @@
+{% extends 'hooptoday/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+{% block content %}
+    <br><br><br><br><br><br>
+<div class="container mx-auto">
+    <form method="post" class="max-w-md mx-auto">
+        {% csrf_token %}
+        <label for="{{ form.team1.id_for_label }}" class="block text-white text-2xl">Select home team: </label>
+        
+        <select name="{{ form.team1.html_name }}" id="{{ form.team1.id_for_label }}" class="form-select mt-1 block w-1/6 text-xl">
+            {% for value, label in form.team1.field.choices %}
+                <option  class="text-lg" value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="{{ form.team2.id_for_label }}" class="block text-white text-2xl">Select away team:</label>
+       
+        <select name="{{ form.team2.html_name }}" id="{{ form.team2.id_for_label }}" class="form-select mt-1 block w-1/6 text-xl">
+            {% for value, label in form.team1.field.choices %}
+                <option class="text-lg" value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">Submit</button>
+    </form>
+    
+    
+    <div class = "container mx-auto justify-center">
+        
+
+        {% if team1 %}
+            <div>
+                <h1 class = 'text-2xl text-white p-4 mb-4'>{{ name1 }} {{ team1score.total }} - {{ team2score.total }} {{ name2 }}</h1>
+            </div>
+            {% for player in team1 %}
+                
+                <div class = "rounded-2xl text-white text-lg bg-gray-800 mb-4 p-2">
+                    <h1> {{ player.name }}</h1>
+                    {{ player.minutesPlayed }} minutes <br>
+                    {{ player.points }} points <br>
+
+                    {{ player.assists }} assists <br>
+                    {{ player.rebounds }} rebounds <br>
+                    {{ player.blocks }} blocks <br>
+                    {{ player.steals }} steals <br>
+                    
+                    
+                    {{ player.turnovers }} turnovers <br>
+                    {{ player.fieldGoalsMade }}/{{ player.fieldGoalsTaken }} FG <br>
+                    {{ player.threeGoalsMade }}/{{ player.threeGoalsTaken }} 3FG <br>
+                    {{ player.freeThrowsMade }}/{{ player.freeThrowsTaken }} FT <br>
+
+
+                </div>
+
+            {% endfor %}
+
+            {% for player in team2 %}
+                
+                <div class = "rounded-2xl text-white text-lg bg-gray-800 mb-4 p-2">
+                    <h1> {{ player.name }}</h1>
+                    {{ player.minutesPlayed }} minutes <br>
+                    {{ player.points }} points <br>
+
+                    {{ player.assists }} assists <br>
+                    {{ player.rebounds }} rebounds <br>
+                    {{ player.blocks }} blocks <br>
+                    {{ player.steals }} steals <br>
+                    
+                    
+                    {{ player.turnovers }} turnovers <br>
+                    {{ player.fieldGoalsMade }}/{{ player.fieldGoalsTaken }} FG <br>
+                    {{ player.threeGoalsMade }}/{{ player.threeGoalsTaken }} 3FG <br>
+                    {{ player.freeThrowsMade }}/{{ player.freeThrowsTaken }} FT <br>
+
+
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+
+    </div>
+</div>
+
+<br>
+<br>
+
+
+{% endblock %}
+    

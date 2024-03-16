@@ -71,3 +71,44 @@ class NBAPlayerQuizForm(forms.Form):
     steal_rtg = forms.IntegerField(label='Steal Rating', initial=70)
     block_rtg = forms.IntegerField(label='Block Rating', initial=70)
     height = forms.IntegerField(label='Height', initial=72)
+
+
+
+class NBAGameSimulatorForm(forms.Form):
+   
+    teams = [
+        ('ATL', 'Atlanta Hawks'),
+        ('BOS', 'Boston Celtics'),
+        ('BKN', 'Brooklyn Nets'),
+        ('CHA', 'Charlotte Hornets'),
+        ('CHI', 'Chicago Bulls'),
+        ('CLE', 'Cleveland Cavaliers'),
+        ('DAL', 'Dallas Mavericks'),
+        ('DEN', 'Denver Nuggets'),
+        ('DET', 'Detroit Pistons'),
+        ('GSW', 'Golden State Warriors'),
+        ('HOU', 'Houston Rockets'),
+        ('IND', 'Indiana Pacers'),
+        ('LAC', 'LA Clippers'),
+        ('LAL', 'Los Angeles Lakers'),
+        ('MEM', 'Memphis Grizzlies'),
+        ('MIA', 'Miami Heat'),
+        ('MIL', 'Milwaukee Bucks'),
+        ('MIN', 'Minnesota Timberwolves'),
+        ('NOP', 'New Orleans Pelicans'),
+        ('NYK', 'New York Knicks'),
+        ('OKC', 'Oklahoma City Thunder'),
+        ('ORL', 'Orlando Magic'),
+        ('PHI', 'Philadelphia 76ers'),
+        ('PHX', 'Phoenix Suns'),
+        ('POR', 'Portland Trail Blazers'),
+        ('SAC', 'Sacramento Kings'),
+        ('SAS', 'San Antonio Spurs'),
+        ('TOR', 'Toronto Raptors'),
+        ('UTA', 'Utah Jazz'),
+        ('WAS', 'Washington Wizards')
+    ]
+    
+
+    team1 = forms.ChoiceField(choices=teams)
+    team2 = forms.ChoiceField(choices=teams)

@@ -17,13 +17,15 @@ from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
 from rest_framework.renderers import TemplateHTMLRenderer
 
+from hooptoday import simulator
+
 
 from .models import Post, GamePost, UserProfile
 from .serializers import PostSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
-from .forms import CreatePost, CreateGamePost, CustomUserCreationForm, ProfilePictureForm, NBAPlayerQuizForm
+from .forms import CreatePost, CreateGamePost, CustomUserCreationForm, ProfilePictureForm, NBAPlayerQuizForm, NBAGameSimulatorForm
 
 from .cloudstorage import get_blob_service_client_account_key,upload_blob_file
 
@@ -579,3 +581,29 @@ def nba_player_quiz(request):
        return render(request, 'hooptoday/nbaPlayerQuiz.html', {'type': "Player",'form': form})
     
     
+def simulate_game(request):
+
+    if request.method == "POST":
+
+        form = NBAGameSimulatorForm(request.POST)
+
+        if form.is_valid():
+
+            name1 = form.cleaned_data['team1']
+            name2 = form.cleaned_data['team2']
+
+            team1,team1score,team2,team2score = simulator.simulate_nba_game(name1,name2)
+
+            context = {
+                'form':form,
+                'team1':team1,
+                'team1score':team1score,
+                'team2':team2,
+                'team2score':team2score,
+                'name1':name1,
+                'name2':name2
+            }
+            return render(request,'hooptoday/simulation.html',context=context)
+    else:
+        form = NBAGameSimulatorForm()
+    return render(request,'hooptoday/simulation.html', {'form' : form})
