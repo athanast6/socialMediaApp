@@ -41,8 +41,8 @@ def get_teams(team,other_team):
     #need to have a form or something that is submitted with the team names
     rosters = get_rosters()
 
-    team1 = rosters[rosters['team'] == team]
-    team2 = rosters[rosters['team'] == other_team]
+    team1 = rosters[rosters['Team'] == team]
+    team2 = rosters[rosters['Team'] == other_team]
 
     #team1.sortby(x=> x.totalstats)
     #team2.sortby(x=> x.totalstats)
@@ -59,8 +59,6 @@ def simulate_nba_game(team, other_team):
     team1, team1score = get_team_stats(team1)
     team2, team2score = get_team_stats(team2)
 
-    print(team1score)
-    print(team2score)
 
     return (team1, team1score, team2, team2score)
     
@@ -121,47 +119,47 @@ def get_team_stats(team):
     defenseMultiplier = total_defense/(len(team))/100
 
 
-    for q in range(0,4):
+    for q in range(0,2):
         for i in range(0,5):
 
             start_usg = team['usageRate'][i]
-            if(start_usg < 75):
-                minutes1 = randint(6,9)
+            if(start_usg < 50):
+                minutes1 = randint(8,13)
             else:
-                minutes1 = int(start_usg/10)+randint(-1,0)
-            minutes2 = 12 - minutes1
+                minutes1 = randint(15,18)
+            minutes2 = 20 - minutes1
             
             team_stats[i].minutesPlayed += minutes1
-            team_stats[i+5].minutesPlayed += minutes2
+            team_stats[9-i].minutesPlayed += minutes2
             
             #Assists
             assists_1 = (randint(0,20) * (minutes1/40) * ((team['make_ast_prob'][i]+team['Pass_rtg'][i])/200))
             team_stats[i].assists += int(assists_1)
 
-            assists_2 = (randint(0,20) * (minutes2/40) * ((team['make_ast_prob'][i+5]+team['Pass_rtg'][i+5])/200))
-            team_stats[i+5].assists += int(assists_2)
+            assists_2 = (randint(0,20) * (minutes2/40) * ((team['make_ast_prob'][9-i]+team['Pass_rtg'][9-i])/200))
+            team_stats[9-i].assists += int(assists_2)
 
             #Rebounds
             #75 is 6'3, to add bonus for height
-            rebounds_1 = (randint(0,20) * (minutes1/40) * ((team['rebound_rtg'][i])/100) * (1+(team['height'][i] - 72)/50))
+            rebounds_1 = (randint(0,20) * (minutes1/40) * ((team['rebound_rtg'][i])/100) * (1+(team['Height'][i] - 72)/50))
             team_stats[i].rebounds += int(rebounds_1)
             
-            rebounds_2 = (randint(0,20) * (minutes2/40) * ((team['rebound_rtg'][i+5])/100) * (1+(team['height'][i+5] - 72)/50))
-            team_stats[i+5].rebounds += int(rebounds_2)
+            rebounds_2 = (randint(0,20) * (minutes2/40) * ((team['rebound_rtg'][9-i])/100) * (1+(team['Height'][9-i] - 72)/50))
+            team_stats[9-i].rebounds += int(rebounds_2)
 
             #Turnovers
             to_1 = (randint(0,15) * (minutes1/40) * (1-((50 - team['turnover_prob'][i])/100)))
             team_stats[i].turnovers += int(to_1)
 
-            to_2 = (randint(0,15) * (minutes2/40) * (1-((50 - team['turnover_prob'][i+5])/100)))
-            team_stats[i+5].turnovers += int(to_2)
+            to_2 = (randint(0,15) * (minutes2/40) * (1-((50 - team['turnover_prob'][9-i])/100)))
+            team_stats[9-i].turnovers += int(to_2)
 
             #Free Throws
             randintFreeThrows1 = (randint(0,15) * (minutes1/40) * ((team['usageRate'][i] + 50)/100))
             team_stats[i].freeThrowsTaken += int(randintFreeThrows1)
 
-            randintFreeThrows2 = (randint(0,15) * (minutes2/40) * ((team['usageRate'][i+5] + 50)/100))
-            team_stats[i+5].freeThrowsTaken += int(randintFreeThrows2)
+            randintFreeThrows2 = (randint(0,15) * (minutes2/40) * ((team['usageRate'][9-i] + 50)/100))
+            team_stats[9-i].freeThrowsTaken += int(randintFreeThrows2)
 
 
             free_rating_adjusted = team['Free_throw_rtg'][i] + randint(-10,10)
@@ -173,31 +171,31 @@ def get_team_stats(team):
             freeThrowsMade1 = (randintFreeThrows1 * (free_rating_adjusted/100))
             team_stats[i].freeThrowsMade += int(freeThrowsMade1)
 
-            freeThrowsMade2 = (randintFreeThrows2 * ((team['Free_throw_rtg'][i+5])/100))
-            team_stats[i+5].freeThrowsMade += int(freeThrowsMade2)
+            freeThrowsMade2 = (randintFreeThrows2 * ((team['Free_throw_rtg'][9-i])/100))
+            team_stats[9-i].freeThrowsMade += int(freeThrowsMade2)
 
 
             #Field Goals
             #Starters
-            fieldGoalsTaken1 = (randint(10,33) * (minutes1/40) * ((team['usageRate'][i])/100))
+            fieldGoalsTaken1 = (randint(5,25) * (minutes1/40) * ((team['usageRate'][i])/100))
             team_stats[i].fieldGoalsTaken += int(fieldGoalsTaken1)
 
             #Bench
-            fieldGoalsTaken2 = (randint(10,33) * (minutes2/40) * ((team['usageRate'][i+5])/100))
-            team_stats[i+5].fieldGoalsTaken += int(fieldGoalsTaken2)
+            fieldGoalsTaken2 = (randint(5,30) * (minutes2/40) * ((team['usageRate'][9-i] + 50)/100))
+            team_stats[9-i].fieldGoalsTaken += int(fieldGoalsTaken2)
 
             
             #Three Point Field Goals
             #rand_threes = randint(0,int(fieldGoalsTaken1))
 
-            rand_threes = (team['take_three_prob'][i]/100) * (fieldGoalsTaken1) * (1/randint(1,3))
-            threeGoalsTaken1 = int(rand_threes)
+            rand_threes1 = (team['take_three_prob'][i]/100) * (fieldGoalsTaken1) * (1/randint(1,3))
+            threeGoalsTaken1 = int(rand_threes1)
             team_stats[i].threeGoalsTaken += threeGoalsTaken1
 
 
-            rand_threes = (team['take_three_prob'][i+5]/100) * (fieldGoalsTaken2) * (1/randint(1,3))
-            threeGoalsTaken2 = int(rand_threes)
-            team_stats[i+5].threeGoalsTaken += threeGoalsTaken2
+            rand_threes2 = (team['take_three_prob'][9-i]/100) * (fieldGoalsTaken2) * (1/randint(1,3))
+            threeGoalsTaken2 = int(rand_threes2)
+            team_stats[9-i].threeGoalsTaken += threeGoalsTaken2
 
         
             threeGoalsMade1 = ((randint(0,int(threeGoalsTaken1))) * ((team['Three_rtg'][i])/100) * (defenseMultiplier))
@@ -208,11 +206,11 @@ def get_team_stats(team):
             team_stats[i].threeGoalsMade += int(threeGoalsMade1)
 
             
-            threeGoalsMade2 = ((randint(0,int(team_stats[i+5].threeGoalsTaken))) * ((team['Three_rtg'][i+5])/100) * defenseMultiplier)
+            threeGoalsMade2 = ((randint(0,int(team_stats[9-i].threeGoalsTaken))) * ((team['Three_rtg'][9-i])/100) * defenseMultiplier)
             if(threeGoalsMade2 > threeGoalsTaken2):
                 threeGoalsMade2 = threeGoalsTaken2
             
-            team_stats[i+5].threeGoalsMade += int(threeGoalsMade2)
+            team_stats[9-i].threeGoalsMade += int(threeGoalsMade2)
 
             #2 Point Field Goals And Total Points
             twoPointTaken1 = int(fieldGoalsTaken1 - threeGoalsTaken1)
@@ -223,22 +221,22 @@ def get_team_stats(team):
 
             team_stats[i].fieldGoalsMade += int(twoPointMade1 + threeGoalsMade1)
 
-            team_stats[i].points += int((3*threeGoalsMade1) + (2*twoPointMade1) + freeThrowsMade1)
+            team_stats[i].points += int((3*int(threeGoalsMade1)) + (2*int(twoPointMade1)) + int(freeThrowsMade1) )
 
 
 
             twoPointTaken2 =  int(fieldGoalsTaken2 - threeGoalsTaken2)
-            twoPointMade2 = ((randint(0,twoPointTaken2)) * ((team['Two_rtg'][i+5])/100) * defenseMultiplier )
+            twoPointMade2 = ((randint(0,twoPointTaken2)) * ((team['Two_rtg'][9-i])/100) * defenseMultiplier )
             if(twoPointMade2 > twoPointTaken2):
                 twoPointMade2 = int(twoPointTaken2)
             
 
-            team_stats[i+5].fieldGoalsMade += int(twoPointMade2 + threeGoalsMade2)
+            team_stats[9-i].fieldGoalsMade += int(twoPointMade2 + threeGoalsMade2)
 
     
-            team_stats[i+5].points += int((3*threeGoalsMade2) + (2*twoPointMade2) + freeThrowsMade2)
+            team_stats[9-i].points += int((3*int(threeGoalsMade2)) + (2*int(twoPointMade2)) + int(freeThrowsMade2))
 
-            teammatePoints = int((3*threeGoalsMade1) + (2*twoPointMade1) + freeThrowsMade1 + (3*threeGoalsMade2) + (2*twoPointMade2) + freeThrowsMade2)
+            teammatePoints = int((3*int(threeGoalsMade1)) + (2*int(twoPointMade1)) + int(freeThrowsMade1) + (3*int(threeGoalsMade2)) + (2*int(twoPointMade2)) + int(freeThrowsMade2))
             if(q==0):
                 teamscore.quarter1 += teammatePoints
             if(q == 1):
@@ -256,15 +254,15 @@ def get_team_stats(team):
             steals1 = (randint(0,10) * (minutes1/40) * ((team['steal_rtg'][i] /100)))
             team_stats[i].steals += int(steals1)
 
-            steals2 = (randint(0,10) * (minutes2/40) * ((team['steal_rtg'][i+5]/100)))
-            team_stats[i+5].steals += int(steals2)
+            steals2 = (randint(0,10) * (minutes2/40) * ((team['steal_rtg'][9-i]/100)))
+            team_stats[9-i].steals += int(steals2)
 
             #Blocks
             blocks1 = (randint(0,10) * (minutes1/40) * ((team['block_rtg'][i]/100)))
             team_stats[i].blocks += int(blocks1)
 
-            blocks2 = (randint(0,10) * (minutes2/40) * ((team['block_rtg'][i+5])/100))
-            team_stats[i+5].blocks += int(blocks2)
+            blocks2 = (randint(0,10) * (minutes2/40) * ((team['block_rtg'][9-i])/100))
+            team_stats[9-i].blocks += int(blocks2)
 
     
     teamscore.total = teamscore.quarter1 + teamscore.quarter2 + teamscore.quarter3 + teamscore.quarter4 + teamscore.overtime
