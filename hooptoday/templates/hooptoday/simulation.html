@@ -25,8 +25,101 @@
         <br>
         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">Submit</button>
     </form>
-    
-    
+
+
+    <div class = "container mx-auto justify-center">
+
+        <p class = "text-white">{{ name1 }} : {{ team1wins }} Wins</p> <br>
+        <p class = "text-white">{{ name2 }} : {{ team2wins }} Wins</p> <br>
+        <p class = "text-white">{{ overtimes }} OTs</p> <br>
+        <p class = "text-white">{{ name1 }} : {{ team1avg }} PPG</p> <br>
+        <p class = "text-white">{{ name2 }} : {{ team2avg }} PPG</p> <br>
+
+
+
+
+    </div>
+    <div class = "container mx-auto justify-center">
+        <div>
+            <h1 class = 'text-2xl text-white py-2 mb-4'>{{ name1 }} {{ team1score.total }} - {{ team2score.total }} {{ name2 }}</h1>
+        </div>
+        
+        <table id="playerStatsTable" class="table-auto text-white">
+            <h1 class = "text-white text-2xl"> {{ name1 }} </h1>
+            <thead>
+            <tr>
+                <th class="px-4 py-2">Player</th>
+                <th class="px-4 py-2">Points</th>
+                <th class="px-4 py-2">Assists</th>
+                <th class="px-4 py-2">Rebounds</th>
+                <th class="px-4 py-2">Steals</th>
+                <th class="px-4 py-2">Blocks</th>
+                <th class="px-4 py-2">Turnovers</th>
+                <th class="px-4 py-2">FG</th>
+                <th class="px-4 py-2">3FG</th>
+                <th class="px-4 py-2">FT</th>
+                <th class="px-4 py-2">Minutes</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for player in team1 %}
+                <tr>
+                    <td class="px-4">{{ player.name }}</td>
+                    <td class="px-4">{{ player.points }}</td>
+                    <td class="px-4">{{ player.assists }}</td>
+                    <td class="px-4">{{ player.rebounds }}</td>
+                    <td class="px-4">{{ player.steals }}</td>
+                    <td class="px-4">{{ player.blocks }}</td>
+                    <td class="px-4">{{ player.turnovers }}</td>
+                    <td class="px-4">{{ player.fieldGoalsMade }}/{{ player.fieldGoalsTaken }}</td>
+                    <td class="px-4">{{ player.threeGoalsMade }}/{{ player.threeGoalsTaken }}</td>
+                    <td class="px-4">{{ player.freeThrowsMade }}/{{ player.freeThrowsTaken }}</td>
+                    <td class="px-4">{{ player.minutesPlayed }}</td>
+                </tr>
+                {% endfor %}
+            
+            </tbody>
+        </table>
+        <table id="playerStatsTable" class="table-auto text-white">
+            <h1 class = "text-white text-2xl"> {{ name2 }} </h1>
+            <thead>
+            <tr>
+                <th class="px-4 py-2">Player</th>
+                <th class="px-4 py-2">Points</th>
+                <th class="px-4 py-2">Assists</th>
+                <th class="px-4 py-2">Rebounds</th>
+                <th class="px-4 py-2">Steals</th>
+                <th class="px-4 py-2">Blocks</th>
+                <th class="px-4 py-2">Turnovers</th>
+                <th class="px-4 py-2">FG</th>
+                <th class="px-4 py-2">3FG</th>
+                <th class="px-4 py-2">FT</th>
+                <th class="px-4 py-2">Minutes</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for player in team2 %}
+                <tr>
+                    <td class="px-4">{{ player.name }}</td>
+                    <td class="px-4">{{ player.points }}</td>
+                    <td class="px-4">{{ player.assists }}</td>
+                    <td class="px-4">{{ player.rebounds }}</td>
+                    <td class="px-4">{{ player.steals }}</td>
+                    <td class="px-4">{{ player.blocks }}</td>
+                    <td class="px-4">{{ player.turnovers }}</td>
+                    <td class="px-4">{{ player.fieldGoalsMade }}/{{ player.fieldGoalsTaken }}</td>
+                    <td class="px-4">{{ player.threeGoalsMade }}/{{ player.threeGoalsTaken }}</td>
+                    <td class="px-4">{{ player.freeThrowsMade }}/{{ player.freeThrowsTaken }}</td>
+                    <td class="px-4">{{ player.minutesPlayed }}</td>
+                </tr>
+                {% endfor %}
+            
+            </tbody>
+        </table>
+    </div>
+
+
+    <!--
     <div class = "container mx-auto justify-center">
         
 
@@ -83,11 +176,16 @@
 
 
     </div>
+    -->
 </div>
 
 <br>
 <br>
 
 
+
+
 {% endblock %}
+
+
     

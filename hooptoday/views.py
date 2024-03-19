@@ -592,7 +592,17 @@ def simulate_game(request):
             name1 = form.cleaned_data['team1']
             name2 = form.cleaned_data['team2']
 
+            print(name1, name2)
+
             team1,team1score,team2,team2score = simulator.simulate_nba_game(name1,name2)
+
+            team1_wins, team2_wins, overtimes, team1_points, team2_points = simulator.simulate_x_games(name1,name2,500)
+
+            team1_avg = float(team1_points/500)
+            team2_avg = float(team2_points/500)
+
+            team1_avg = round(team1_avg,1)
+            team2_avg = round(team2_avg,1)
 
             context = {
                 'form':form,
@@ -601,8 +611,14 @@ def simulate_game(request):
                 'team2':team2,
                 'team2score':team2score,
                 'name1':name1,
-                'name2':name2
+                'name2':name2,
+                'team1wins':team1_wins,
+                'team2wins': team2_wins,
+                'overtimes': overtimes,
+                'team1avg':team1_avg,
+                'team2avg':team2_avg,
             }
+
             return render(request,'hooptoday/simulation.html',context=context)
     else:
         form = NBAGameSimulatorForm()
