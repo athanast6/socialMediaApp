@@ -50,21 +50,38 @@ def get_teams(team,other_team):
     #take 10 of  team
 
     return team1, team2
+
+
+def get_teams_defense(team,other_team):
+    #get the two teams to simulate the game
+    #need to have a form or something that is submitted with the team names
+    defense_ratings = get_defense_ratings()
+
+    team1_defense = defense_ratings[defense_ratings['Key'] == team]
+    team2_defense = defense_ratings[defense_ratings['Key'] == other_team]
+
+    #team1.sortby(x=> x.totalstats)
+    #team2.sortby(x=> x.totalstats)
+
+    #take 10 of  team
+
+    return team1_defense, team2_defense
     
 
 def simulate_nba_game(team, other_team):
 
     team1,team2 = get_teams(team,other_team)
+    team1_defense, team2_defense =  get_teams_defense(team,other_team)
 
-    team1, team1score = get_team_stats(team1)
-    team2, team2score = get_team_stats(team2)
+    team1, team1score = get_team_stats(team1, team2_defense)
+    team2, team2score = get_team_stats(team2, team1_defense)
 
 
     return (team1, team1score, team2, team2score)
     
 
 
-def get_team_stats(team):
+def get_team_stats(team, other_team_defense):
 
     #Team is a list
     # Create a DataFrame from the list
@@ -114,11 +131,14 @@ def get_team_stats(team):
 
     
     
-    total_defense = team['steal_rtg'].sum() + team['block_rtg'].sum() + team['rebound_rtg'].sum()
+    #total_defense = team['steal_rtg'].sum() + team['block_rtg'].sum() + team['rebound_rtg'].sum()
     #for( player in otherTeam.teamplayers)
     #    otherTeamDefense += player.defrtg
     
-    defenseMultiplier = total_defense/(len(team))/100
+    #defenseMultiplier = total_defense/(len(team))/100
+
+    fg_multiplier = other_team_defense['FG_DEF']   # calculated_fg + (fg_multiplier)*(FGA)
+    ft_multiplier = other_team_defense['FT_DEF']   # calculated_ft + (ft_multiplier)*(FTA)
 
 
     for q in range(0,2):
@@ -154,10 +174,15 @@ def get_team_stats(team):
             team_stats[9-i].turnovers += int(to_2)
 
             #Free Throws
+            #Average free throw attempts for ncaa team: 18.9
+
+
             randintFreeThrows1 = (randint(0,8) * ((team['draw_foul_rtg'][i])/100) * (minutes1/20))
+            randintFreeThrows1 = randintFreeThrows1 + (randintFreeThrows1 * ft_multiplier)
             team_stats[i].freeThrowsTaken += int(randintFreeThrows1)
 
             randintFreeThrows2 = (randint(0,8) * ((team['draw_foul_rtg'][9-i])/100) * (minutes1/20))
+            randintFreeThrows2 = randintFreeThrows2 + (randintFreeThrows2 * ft_multiplier)
             team_stats[9-i].freeThrowsTaken += int(randintFreeThrows2)
 
 
@@ -176,29 +201,33 @@ def get_team_stats(team):
 
             #Field Goals
             #Starters
-            
-            fieldGoalsTaken1 = (randint(2,14) * ((team['usageRate'][i])/100) * (minutes1/20))
-            team_stats[i].fieldGoalsTaken += int(fieldGoalsTaken1)\
+            #Average field goals for ncaa team: 58.4
+
+
+            fieldGoalsTaken1 = (randint(2,20) * ((team['usageRate'][i])/100) * (minutes1/20))
+            fieldGoalsTaken1 = fieldGoalsTaken1 + (fieldGoalsTaken1 * fg_multiplier)
+            team_stats[i].fieldGoalsTaken += int(fieldGoalsTaken1)
 
             #Bench
-            fieldGoalsTaken2 = (randint(2,12) * ((team['usageRate'][9-i])/100) * (minutes1/20))
+            fieldGoalsTaken2 = (randint(2,20) * ((team['usageRate'][9-i])/100) * (minutes2/20))
+            fieldGoalsTaken2 = fieldGoalsTaken2 + (fieldGoalsTaken2 * fg_multiplier)
             team_stats[9-i].fieldGoalsTaken += int(fieldGoalsTaken2)
 
             
             #Three Point Field Goals
             #rand_threes = randint(0,int(fieldGoalsTaken1))
 
-            rand_threes1 = (team['take_three_prob'][i]/100) * (fieldGoalsTaken1) * (1/randint(1,3))
+            rand_threes1 = (team['take_three_prob'][i]/100) * (fieldGoalsTaken1) * (1/randint(2,3))
             threeGoalsTaken1 = int(rand_threes1)
             team_stats[i].threeGoalsTaken += threeGoalsTaken1
 
 
-            rand_threes2 = (team['take_three_prob'][9-i]/100) * (fieldGoalsTaken2) * (1/randint(1,3))
+            rand_threes2 = (team['take_three_prob'][9-i]/100) * (fieldGoalsTaken2) * (1/randint(2,3))
             threeGoalsTaken2 = int(rand_threes2)
             team_stats[9-i].threeGoalsTaken += threeGoalsTaken2
 
         
-            threeGoalsMade1 = int((randint(0,int(threeGoalsTaken1))) * ((team['Three_rtg'][i])/100))
+            threeGoalsMade1 = int((threeGoalsTaken1) * ((team['Three_rtg'][i])/100))
             
             if(threeGoalsMade1 > threeGoalsTaken1):
                 threeGoalsMade1 = threeGoalsTaken1
@@ -206,7 +235,7 @@ def get_team_stats(team):
             team_stats[i].threeGoalsMade += int(threeGoalsMade1)
 
             
-            threeGoalsMade2 = int((randint(0,int(threeGoalsTaken2))) * ((team['Three_rtg'][9-i])/100))
+            threeGoalsMade2 = int((threeGoalsTaken2) * ((team['Three_rtg'][9-i])/100))
             if(threeGoalsMade2 > threeGoalsTaken2):
                 threeGoalsMade2 = threeGoalsTaken2
             
@@ -275,7 +304,9 @@ def get_team_stats(team):
 
 def simulate_x_games(team, other_team, num_games):
 
-    
+    team1_forsim,team2_forsim = get_teams(team,other_team)
+
+    team1_defense, team2_defense =  get_teams_defense(team,other_team)
 
     team1_wins = 0
     team2_wins = 0
@@ -286,10 +317,10 @@ def simulate_x_games(team, other_team, num_games):
 
     for x in range(0,num_games):
 
-        team1,team2 = get_teams(team,other_team)
+        
 
-        team1, team1score = get_team_stats(team1)
-        team2, team2score = get_team_stats(team2)
+        team1, team1score = get_team_stats(team1_forsim, team2_defense)
+        team2, team2score = get_team_stats(team2_forsim, team1_defense)
 
         team1_points += team1score.total
         team2_points += team2score.total
