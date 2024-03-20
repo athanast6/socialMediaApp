@@ -596,10 +596,10 @@ def simulate_game(request):
 
             team1,team1score,team2,team2score = simulator.simulate_nba_game(name1,name2)
 
-            team1_wins, team2_wins, overtimes, team1_points, team2_points = simulator.simulate_x_games(name1,name2,500)
+            team1_wins, team2_wins, overtimes, team1_points, team2_points = simulator.simulate_x_games(name1,name2,25)
 
-            team1_avg = float(team1_points/500)
-            team2_avg = float(team2_points/500)
+            team1_avg = float(team1_points/25)
+            team2_avg = float(team2_points/25)
 
             team1_avg = round(team1_avg,1)
             team2_avg = round(team2_avg,1)
