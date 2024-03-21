@@ -26,6 +26,16 @@
         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">Submit</button>
     </form>
 
+    <br>
+
+    <div id = "upsetMeter">
+        <h1 class=" text-xl text-white" id = "upsetText"> Upset Meter</h1> <br>
+        <h1 class=" text-xl text-white" id = "resultText"> </h1> <br>
+    </div>
+
+    
+    
+
 
     <div class = "container mx-auto justify-center">
         <p class = "text-white">Through 25 Simulated Games: </p> <br>
@@ -181,6 +191,91 @@
 
 <br>
 <br>
+
+<script>
+    const upsetPotential = '{{upsetMeter}}';
+    console.log(upsetPotential);
+        // Assuming you have a function to update the width of the bar
+    function createBars() {
+        const upsetMeter = document.getElementById('upsetMeter');
+
+        const backgroundBar = document.createElement('div');
+        backgroundBar.classList.add('bg-blue-500', 'rounded-2xl' , 'p-2');
+        backgroundBar.id = 'backgroundBar';
+        backgroundBar.innerHTML = '<br><br><br>';
+        backgroundBar.style.width="100%";
+        upsetMeter.appendChild(backgroundBar);
+
+        const barElement = document.createElement('div');
+        barElement.style.backgroundColor = `rgb(100,100,100)`;
+        barElement.classList.add('rounded-2xl', 'p-2');
+        barElement.id = 'bar';
+        barElement.innerHTML = '<p class = "text-white p-4 text-sm"> <br></p><br>';
+        //barElement.style.width = parseFloat(widthPercentage) + '%';
+        barElement.style.transform="translate(0%,-97.5%)";
+        upsetMeter.appendChild(barElement);
+
+        
+        
+    }
+
+    function animateBarWidth(upsetPotential, duration) {
+
+        const barElement = document.getElementById('bar');
+        const upsetText = document.getElementById('upsetText');
+
+        let currentWidth = 0;
+        const increment = upsetPotential / (duration / 1000); // Calculate width increment per millisecond
+
+        const interval = setInterval(function() {
+            currentWidth += increment;
+            if (currentWidth >= upsetPotential) {
+                clearInterval(interval);
+                currentWidth = upsetPotential; // Ensure final width is exactly 'upsetPotential'
+            }
+            barElement.style.width = currentWidth + '%';
+            const r = 255*((100-currentWidth)/100);
+            const g = 255*(currentWidth)/100;
+            const b = 0;
+            
+            barElement.style.backgroundColor = `rgb(${r},${g},${b})`;
+
+            
+            upsetText.innerHTML = ("Upset Meter: " + currentWidth + "%");
+
+        }, 500); // Update width every 1 millisecond
+
+
+        
+        
+        
+    }
+    function addTextAfterDelay() {
+        const resultText = document.getElementById('resultText');
+        if(upsetPotential > 75){
+            resultText.textContent = "Upset Likely";
+        }else if(upsetPotential > 50){
+            resultText.textContent = "Upset Probable";
+        }
+        else if(upsetPotential > 25){
+            resultText.textContent = "Upset Possible";
+        }else if(upsetPotential > 10){
+            resultText.textContent = "Upset Doubtful";
+        }else{
+            resultText.textContent = "There's Always a Chance!";
+        }
+    }
+
+   
+
+    document.addEventListener('DOMContentLoaded', function() {
+        createBars();
+        //updateBarWidth(upsetPotential);
+        animateBarWidth(upsetPotential,5000);
+        setTimeout(addTextAfterDelay,5000);
+        
+    });
+</script>
 
 
 

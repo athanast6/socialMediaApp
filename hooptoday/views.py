@@ -592,9 +592,15 @@ def simulate_game(request):
             name1 = form.cleaned_data['team1']
             name2 = form.cleaned_data['team2']
 
-            print(name1, name2)
+            #index1 = dict(form.fields['team1'].choices).keys().index(name1)
+            #index2 = dict(form.fields['team2'].choices).keys().index(name2)
+            choices_dict = dict(form.fields['team1'].choices)
+            index1 = list(choices_dict.keys()).index(name1)
+            index2 = list(choices_dict.keys()).index(name2)
+            seed1 = index1 // 4
+            seed2 = index2 // 4
 
-            team1,team1score,team2,team2score = simulator.simulate_nba_game(name1,name2)
+            team1,team1score,team2,team2score = simulator.simulate_ncaa_game(name1,name2)
 
             team1_wins, team2_wins, overtimes, team1_points, team2_points = simulator.simulate_x_games(name1,name2,25)
 
@@ -604,8 +610,20 @@ def simulate_game(request):
             team1_avg = round(team1_avg,1)
             team2_avg = round(team2_avg,1)
 
+            #calculate upset meter
+            #get difference in seeds
+            seed_diff = abs(seed1 - seed2)
+            #multiply by pt diff
+            if(seed1>=seed2):
+                pt_diff = team1_avg - team2_avg
+            else:
+                pt_diff = team2_avg - team1_avg
+
+            upset_meter = round(min(max(5,50 + (pt_diff*seed_diff)),95),2)
+
             context = {
                 'form':form,
+                'upsetMeter': upset_meter,
                 'team1':team1,
                 'team1score':team1score,
                 'team2':team2,

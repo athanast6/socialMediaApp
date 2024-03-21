@@ -72,7 +72,7 @@ def get_teams_defense(team,other_team):
     return team1_defense, team2_defense
     
 
-def simulate_nba_game(team, other_team):
+def simulate_ncaa_game(team, other_team):
 
     team1,team2 = get_teams(team,other_team)
     team1_defense, team2_defense =  get_teams_defense(team,other_team)
